@@ -20,15 +20,28 @@
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="flower0x00   动调elf文件,idawsl动调无法正常运行,提示Don’t trace me:(,猜测有反调试.  0x01   去花ida发现标红，无法f5,track到有很明显的花,4048e5处jz和jnz必有一个执行,所以call永不执行  直接nop掉call,然后选中标红段按c强转为code,找到函数头按u再按p重定义,即可正常f5  0x02  去反调试对主函数按x向上追">
+<meta property="og:type" content="article">
 <meta property="og:title" content="My New Post">
 <meta property="og:url" content="http://example.com/2025/11/06/My-New-Post/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="flower0x00   动调elf文件,idawsl动调无法正常运行,提示Don’t trace me:(,猜测有反调试.  0x01   去花ida发现标红，无法f5,track到有很明显的花,4048e5处jz和jnz必有一个执行,所以call永不执行  直接nop掉call,然后选中标红段按c强转为code,找到函数头按u再按p重定义,即可正常f5  0x02  去反调试对主函数按x向上追">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105151711679.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105150024312.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105152045437.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105153916779.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105154220679.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105173120318.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105173318497.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251106145307003.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105171058080.png">
+<meta property="og:image" content="e:/hexo_blog/source/_posts/image/image-20251105171232060.png">
 <meta property="article:published_time" content="2025-11-06T15:19:01.000Z">
-<meta property="article:modified_time" content="2025-11-06T15:19:01.483Z">
+<meta property="article:modified_time" content="2025-11-07T08:43:40.459Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="e:/hexo_blog/source/_posts/image/image-20251105151711679.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -193,14 +206,43 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            0 words 
+            1.6k words 
           </div>
         </div>
         
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          
+          <h1 id="flower"><a href="#flower" class="headerlink" title="flower"></a><strong>flower</strong></h1><h2 id="0x00-动调"><a href="#0x00-动调" class="headerlink" title="0x00   动调"></a>0x00   动调</h2><p>elf文件,idawsl动调无法正常运行,提示Don’t trace me:(,猜测有反调试.</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105151711679.png" alt="image-20251105151711679"></p>
+<h2 id="0x01-去花"><a href="#0x01-去花" class="headerlink" title="0x01   去花"></a>0x01   去花</h2><p>ida发现标红，无法f5,track到有很明显的花,4048e5处jz和jnz必有一个执行,所以call永不执行</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105150024312.png" alt="image-20251105150024312"></p>
+<p>直接nop掉call,然后选中标红段按c强转为code,找到函数头按u再按p重定义,即可正常f5</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105152045437.png" alt="image-20251105152045437"></p>
+<h2 id="0x02-去反调试"><a href="#0x02-去反调试" class="headerlink" title="0x02  去反调试"></a>0x02  去反调试</h2><p>对主函数按x向上追溯,发现这里第24行的cin没有执行,下第10行的断点后调试,发现在check中会跳出</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105153916779.png" alt="image-20251105153916779"></p>
+<p>进入发现ptrace反调试函数,if(调试)就进入下面的块</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105154220679.png" alt="image-20251105154220679"></p>
+<p>直接让他不进入即可,将jz改为jmp</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105173120318.png" alt="image-20251105173120318"></p>
+<p>然后就可以正常调试了,solve加密函数也能正常显示</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105173318497.png" alt="image-20251105173318497"></p>
+<h2 id="0x03-解密"><a href="#0x03-解密" class="headerlink" title="0x03 解密"></a>0x03 解密</h2><p>encode函数就是将输入自增,异或和与enc中比较</p>
+<p>解密代码:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> encflag[] = &#123;<span class="number">0x4F</span>,<span class="number">0x1A</span>,<span class="number">0x59</span>,<span class="number">0x1F</span>,<span class="number">0x5B</span>,<span class="number">0x1D</span>,<span class="number">0x5D</span>,<span class="number">0x6F</span>,<span class="number">0x7B</span>,<span class="number">0x47</span>,<span class="number">0x7E</span>,<span class="number">0x44</span>,<span class="number">0x6A</span>,<span class="number">0x7</span>,<span class="number">0x59</span>,<span class="number">0x67</span>,<span class="number">0xE</span>,<span class="number">0x52</span>,<span class="number">0x8</span>,<span class="number">0x63</span>,<span class="number">0x5C</span>,<span class="number">0x1A</span>,<span class="number">0x52</span>,<span class="number">0x1F</span>,<span class="number">0x20</span>,<span class="number">0x7B</span>,<span class="number">0x21</span>,<span class="number">0x77</span>,<span class="number">0x70</span>,<span class="number">0x25</span>,<span class="number">0x74</span>,<span class="number">0x2B</span>,<span class="number">0x44</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> key = <span class="number">0x23</span>;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">​    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">​    &#123;</span><br><span class="line">​        encflag[i] ^= key;</span><br><span class="line">​        key++;</span><br><span class="line">​        cout&lt;&lt;<span class="built_in">char</span>((encflag[i]&lt;&lt;<span class="number">24</span>)&amp;<span class="number">0xFF</span>);</span><br><span class="line">​    &#125;</span><br><span class="line">​    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解完发现不对:111l&gt;|9|5tEPkSjE7hU&#x3D;f&#x3D;Uk”k%</p>
+<p>构造跳过验证moectf{}和内部32位长度,动调过去发现key最后被修改为0x29(函数内自增了一次)</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251106145307003.png" alt="image-20251106145307003"></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> encflag[] = &#123;<span class="number">0x4F</span>,<span class="number">0x1A</span>,<span class="number">0x59</span>,<span class="number">0x1F</span>,<span class="number">0x5B</span>,<span class="number">0x1D</span>,<span class="number">0x5D</span>,<span class="number">0x6F</span>,<span class="number">0x7B</span>,<span class="number">0x47</span>,<span class="number">0x7E</span>,<span class="number">0x44</span>,<span class="number">0x6A</span>,<span class="number">0x7</span>,<span class="number">0x59</span>,<span class="number">0x67</span>,<span class="number">0xE</span>,<span class="number">0x52</span>,<span class="number">0x8</span>,<span class="number">0x63</span>,<span class="number">0x5C</span>,<span class="number">0x1A</span>,<span class="number">0x52</span>,<span class="number">0x1F</span>,<span class="number">0x20</span>,<span class="number">0x7B</span>,<span class="number">0x21</span>,<span class="number">0x77</span>,<span class="number">0x70</span>,<span class="number">0x25</span>,<span class="number">0x74</span>,<span class="number">0x2B</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> key = <span class="number">0x29</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">​    encflag[i] ^= key;</span><br><span class="line"></span><br><span class="line">​    key++;</span><br><span class="line"></span><br><span class="line">​    <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,<span class="built_in">char</span>((encflag[i])&amp;<span class="number">0xFF</span>));</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解得f0r3v3r_JuMp_1n_7h3_a$m_a9b35c3c,套上验证moectf{}即可;</p>
+<h1 id="test"><a href="#test" class="headerlink" title="test"></a><strong>test</strong></h1><h2 id="0x00-调试"><a href="#0x00-调试" class="headerlink" title="0x00 调试"></a>0x00 调试</h2><p>发现flag似乎一闪而过</p>
+<h2 id="0x01-下断点"><a href="#0x01-下断点" class="headerlink" title="0x01 下断点"></a>0x01 下断点</h2><p>主函数中什么也没有,尝试下断点动态调试,最终找到进入了这样的函数<img src="E:/hexo_blog/source/_posts/image/image-20251105171058080.png" alt="image-20251105171058080"></p>
+<p>再断在clear之前,显示出flag</p>
+<p><img src="E:/hexo_blog/source/_posts/image/image-20251105171232060.png" alt="image-20251105171232060"></p>
+<p>flag{Wow_Y0u_f1nd_me_in_init_array!}</p>
+
         
       </div>
 
