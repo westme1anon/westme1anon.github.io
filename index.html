@@ -163,6 +163,93 @@
    
 
 
+<article id="post-司家旭_wp_flower_test" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2025/11/07/%E5%8F%B8%E5%AE%B6%E6%97%AD_wp_flower_test/">Untitled</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-11-07T07:54:20.517Z" itemprop="datePublished">2025-11-07</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    Uncategorized 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            1.6k words 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            
+              flower0x00   动调elf文件,idawsl动调无法正常运行,提示Don’t trace me:(,猜测有反调试.
+
+0x01   去花ida发现标红，无法f5,track到有很明显的花,4048e5处jz和jnz必有一个执行,所以call永不执行
+
+直接nop掉call,然后选中标红段按c强转为code,找到函数头按u再按p重定义,即可正常f5
+
+0x02  去反调试对主函数按x向上追溯,发现这里第24行的cin没有执行,下第10行的断点后调试,发现在check中会跳出
+
+进入发现ptrace反调试函数,if(调试)就进入下面的块
+
+直接让他不进入即可,将jz改为jmp
+
+然后就可以正常调试了,solve加密函数也能正常显示
+
+0x03 解密encode函数就是将输入自增,异或和与enc中比较
+解密代码:
+12345678910111213141516171819202122#include&lt;iostream&gt;#include&lt;string&gt;#include&lt;algorithm&gt;#include&lt;vector&gt;using...
+            
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2025/11/07/%E5%8F%B8%E5%AE%B6%E6%97%AD_wp_flower_test/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+   
+
+
 <article id="post-My-New-Post" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
    
   <div class="article-inner">
