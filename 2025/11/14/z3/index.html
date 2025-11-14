@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="false" > 
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet">
+<link href="https://cdn.staticfile.org/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>z3使用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="0x01 基本用法求解器在使用 z3 进行约束求解之前我们首先需要获得一个 求解器 类实例，本质上其实就是一组约束的集合： 1&gt;&gt;&gt; s &#x3D; z3.Solver()  变量再创建用于解方程的变量 12345import z3;x &#x3D; z3.Int(name &#x3D; &#x27;x&#x27;)   #x是整形变量y &#x3D; z3.Real(name &#x3D; &#x27;y&#x27;)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="z3使用">
+<meta property="og:url" content="http://example.com/2025/11/14/z3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="0x01 基本用法求解器在使用 z3 进行约束求解之前我们首先需要获得一个 求解器 类实例，本质上其实就是一组约束的集合： 1&gt;&gt;&gt; s &#x3D; z3.Solver()  变量再创建用于解方程的变量 12345import z3;x &#x3D; z3.Int(name &#x3D; &#x27;x&#x27;)   #x是整形变量y &#x3D; z3.Real(name &#x3D; &#x27;y&#x27;)">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-11-14T03:28:47.000Z">
+<meta property="article:modified_time" content="2025-11-14T12:50:11.557Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="z3">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  
+   
+  <div id="main-grid" class="  ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Hexo </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS Feed">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS Feed">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+        <image src=/tou_xiang.png></image>
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">westme1anon </div>
+      <div class="dot"></div>
+      <div class="subtitle">hachimi </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://twitter.com" title="luogu"><i class="fa-brands fa-x"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://steamcommunity.com/profiles/76561198904761814/" title="Steam"><i class="fa-brands fa-steam"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/westme1anon" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">Categories</h3>
+      <div class="category-box">
+            <a class="category-link" href="/categories/CTF/">
+                CTF
+                <div class="category-count">4</div>
+            </a>
+        <div class="children"><div class="category-box">
+            <a class="category-link" href="/categories/CTF/qctf/">
+                qctf
+                <div class="category-count">2</div>
+            </a>
+        
+            <a class="category-link" href="/categories/CTF/moectf2025/">
+                moectf2025
+                <div class="category-count">1</div>
+            </a>
+        
+            <a class="category-link" href="/categories/CTF/wiki/">
+                wiki
+                <div class="category-count">1</div>
+            </a>
+        </div></div></div>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">Tags</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/flower/" rel="tag">flower</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/hook/" rel="tag">hook</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/re/" rel="tag">re</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/seh/" rel="tag">seh</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/try-catch/" rel="tag">try catch</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/wp/" rel="tag">wp</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/z3/" rel="tag">z3</a></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+
+<article id="post-z3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        z3使用
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2025-11-14T03:28:47.000Z" itemprop="datePublished">2025-11-14</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+  <a class="meta-cate-link" href="/categories/CTF/">CTF</a>><a class="meta-cate-link" href="/categories/CTF/wiki/">wiki</a>
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            3k words 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/z3/" rel="tag">z3</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h1 id="0x01-基本用法"><a href="#0x01-基本用法" class="headerlink" title="0x01 基本用法"></a>0x01 基本用法</h1><h2 id="求解器"><a href="#求解器" class="headerlink" title="求解器"></a>求解器</h2><p>在使用 <code>z3</code> 进行约束求解之前我们首先需要获得一个 <em>求解器</em> 类实例，<strong>本质上其实就是一组约束的集合</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = z3.Solver()</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>再创建用于解方程的变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> z3;</span><br><span class="line">x = z3.Int(name = <span class="string">&#x27;x&#x27;</span>)   <span class="comment">#x是整形变量</span></span><br><span class="line">y = z3.Real(name = <span class="string">&#x27;y&#x27;</span>)   <span class="comment">#y是实数</span></span><br><span class="line">z = z3.BitVec(name= <span class="string">&#x27;z&#x27;</span>, bv = <span class="number">32</span>)   <span class="comment">#z是长度为32位的向量（向量长度需初始化）</span></span><br><span class="line">p = z3.Bool(name = <span class="string">&#x27;p&#x27;</span>)   <span class="comment">#p是bool型</span></span><br></pre></td></tr></table></figure>
+
+<p>整型与实数类型变量之间可以互相进行转换：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">z3.ToReal(x)</span><br><span class="line">z3.ToInt(y)</span><br></pre></td></tr></table></figure>
+
+<p>还能创建常量</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z3.IntVal(val = <span class="number">114514</span>) <span class="comment">#int类型常量</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="添加约束"><a href="#添加约束" class="headerlink" title="添加约束"></a>添加约束</h2><p>用add()方法为指定求解器添加约束，条件为初始化中变量组成的式子；</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s.add(x + <span class="number">5</span> == <span class="number">111</span>)</span><br><span class="line">s.add(y + <span class="number">3</span> == x)</span><br></pre></td></tr></table></figure>
+
+<p>bool类型还可逻辑运算，暂且不表；</p>
+<h2 id="约束求解"><a href="#约束求解" class="headerlink" title="约束求解"></a>约束求解</h2><p>使用check()方法寻找是否有解</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s.check()</span><br><span class="line">sat  <span class="comment">#有解</span></span><br><span class="line"><span class="comment"># 返回unsat则无解</span></span><br></pre></td></tr></table></figure>
+
+<p>若有解则可以通过model()方法获取一组解；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; if s.check() == z3.sat:</span><br><span class="line">   		print(s.model())</span><br><span class="line">[y = 103, x = 106]</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x02-for-CTF"><a href="#0x02-for-CTF" class="headerlink" title="0x02 for CTF"></a>0x02 for CTF</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>不用写z3.前缀；</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br></pre></td></tr></table></figure>
+
+<p>用循环创建变量</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">v = [Int(<span class="string">f&#x27;v<span class="subst">&#123;i&#125;</span>&#x27;</span>)    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>)]  <span class="comment">#f&#x27;&#123;&#125;&#x27;用来格式化字符串，传入后面的i</span></span><br><span class="line"><span class="comment"># or</span></span><br><span class="line">x = [<span class="number">0</span>] * <span class="number">16</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>):</span><br><span class="line">    x[i] = Int(<span class="string">&#x27;x[&#x27;</span> + <span class="built_in">str</span>(i) + <span class="string">&#x27;]&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="求解"><a href="#求解" class="headerlink" title="求解"></a>求解</h2><p>model()方法会返回一个列表，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[i11i1Iii1I1[14] = 49,</span><br><span class="line"> i11i1Iii1I1[28] = 125,</span><br><span class="line"> i11i1Iii1I1[27] = 51,</span><br><span class="line">...</span><br><span class="line"> i11i1Iii1I1[7] = 54]</span><br></pre></td></tr></table></figure>
+
+<p>接下来要做的是将解转化为字符，但由于该列表中的元素是z3中的特殊类型，需要先转换为python中的整数类型才能使用chr()函数转为对应字符;</p>
+<p>但列表中解不是按未知参数或数组大小排序的，解决办法是循环访问列表中的值，将其作为索引去访问ans列表，即此处的【<strong>ans[i]</strong>】，然后使用as_long()函数将解的类型转为python中的int类型，最后使用chr()函数转为对应字符；</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> solver.check() == sat: <span class="comment">#check()方法用来判断是否有解，sat(即satisify)表示满足有解</span></span><br><span class="line">    ans = solver.model() <span class="comment">#model()方法得到解</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> v:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">chr</span>(ans[i].as_long()), end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="comment">#一般不会无解，如果无解八成是未知数变量的类型不符合，或约束方程添加错误</span></span><br><span class="line"><span class="comment"># or</span></span><br><span class="line"><span class="keyword">if</span> z3.Solver.check(s) == z3.sat: </span><br><span class="line">    ans = z3.Solver.model(s) </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> i11i1Iii1I1:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">chr</span>(ans[i].as_long()), end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-板子"><a href="#0x03-板子" class="headerlink" title="0x03 板子"></a>0x03 板子</h1><p><em>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/liKeQing1027520/article/details/138047537">https://blog.csdn.net/liKeQing1027520/article/details/138047537</a></em></p>
+<p><em>板子作者：CSDN-晴友读钟</em></p>
+<h2 id="预处理字符串"><a href="#预处理字符串" class="headerlink" title="预处理字符串"></a>预处理字符串</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">replace_func</span>(<span class="params"><span class="keyword">match</span></span>):</span><br><span class="line">    shift = <span class="number">2</span> <span class="comment">#shift是指第一个未知数和0的差，例如：如果题目中第一个未知数是v2（如果是v3），那么shift就设置成2（就设置成3）</span></span><br><span class="line">    index = <span class="built_in">int</span>(<span class="keyword">match</span>.group(<span class="number">1</span>)) - shift</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">str</span>(<span class="string">f&#x27;v[<span class="subst">&#123;index&#125;</span>]&#x27;</span>)  <span class="comment"># 返回字符串&#x27;v[a后数字-1]&#x27;，用其替换匹配到的an</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    s1 = <span class="string">&quot;&quot;</span>  <span class="comment"># 定义包含an的字符串</span></span><br><span class="line">s1 = re.sub(<span class="string">r&#x27;v(2[0-9]|1[0-9]|[1-9])&#x27;</span>, replace_func, s1)</span><br><span class="line"><span class="comment"># sub函数参数, pattern、repl、string分别表示：正则表达式匹配规则、替换后结果（可以是函数也可以是常量）、要被查找替换的原始字符串</span></span><br><span class="line">s1 = re.sub(<span class="string">&#x27;!&#x27;</span>, <span class="string">&#x27;=&#x27;</span>, s1) <span class="comment">#有些题目给的条件的方程是用&#x27;||&#x27;关系运算符连接的不等式方程，需要用这一行代码将&#x27;!&#x27;替换成&#x27;=&#x27;变成等式方程</span></span><br><span class="line">res = s1.split(<span class="string">&#x27;| | &#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
+
+<p>**（ida）*<em>将整串条件复制过来放进s1中之后，把多余的换行和空格删除掉</em>（shift+tab删除缩进）*，形成一连串的由关系运算符连接的条件；</p>
+<p>接着你根据条件中具体的关系运算符，到底是”&amp;&amp;”还是”||”来使用split()函数将每个方程分隔开形成列表</p>
+<p>在这里你需要仔细注意一下方程中的”||”中间有没有空格，如果有那你用的split()函数也得加上空格，即s1.split(‘| |’)，因为你要让split()函数正确地找到分隔符</p>
+<p>然后打印res就可以输出分割好的方程列表</p>
+<h2 id="求解-1"><a href="#求解-1" class="headerlink" title="求解"></a>求解</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solver_eng</span>(<span class="params">fc</span>):</span><br><span class="line">    <span class="comment"># 创建解释器对象</span></span><br><span class="line">    solver = Solver()</span><br><span class="line">    <span class="comment"># 添加约束方程</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(fc)):</span><br><span class="line">        solver.add(<span class="built_in">eval</span>(fc[i])) <span class="comment">#eval函数会将字符串形式的方程转换为z3模块能解析的方程</span></span><br><span class="line"><span class="comment"># 求解并转化为字符输出，得到flag</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> solver.check() == sat:  <span class="comment"># check()方法用来判断是否有解，sat(即satisify)表示满足有解</span></span><br><span class="line">    ans = solver.model()  <span class="comment"># model()方法得到解</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> v:</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">chr</span>(ans[i].as_long()), end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line"><span class="comment"># 一般不会无解，如果无解八成是未知数变量的类型不符合，或约束方程添加错误</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;no ans!&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 设置方程，请用脚本将条件中的所有方程处理成列表，然后赋值给fc列表（这样你就不用一个一个方程慢慢去复制了）</span></span><br><span class="line">    fc = []</span><br><span class="line">    <span class="comment"># 创建未知数变量</span></span><br><span class="line">    v = [Int(<span class="string">f&#x27;v<span class="subst">&#123;i&#125;</span>&#x27;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(fc))]</span><br></pre></td></tr></table></figure>
+
+<p>把这一整个列表复制下来，赋值给下面这个脚本的fc列表，直接运行就能出结果，这样脚本的通用性和便捷性大大提升了。</p>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2025/11/09/qctf-hachimi/"
+      title="hachimi：浅看trycatch混淆"
+     >
+
+    <p class="title-text">
+      
+        hachimi：浅看trycatch混淆
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2025 westme1anon<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
