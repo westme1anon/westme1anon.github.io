@@ -28,7 +28,7 @@
 <meta property="og:description" content="0x01 基本用法求解器在使用 z3 进行约束求解之前我们首先需要获得一个 求解器 类实例，本质上其实就是一组约束的集合： 1&gt;&gt;&gt; s &#x3D; z3.Solver()  变量再创建用于解方程的变量 12345import z3;x &#x3D; z3.Int(name &#x3D; &#x27;x&#x27;)   #x是整形变量y &#x3D; z3.Real(name &#x3D; &#x27;y&#x27;)">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-14T03:28:47.000Z">
-<meta property="article:modified_time" content="2025-11-14T12:50:11.557Z">
+<meta property="article:modified_time" content="2025-11-14T12:53:16.420Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="ctf">
 <meta property="article:tag" content="z3">
@@ -158,14 +158,14 @@
                 <div class="category-count">4</div>
             </a>
         <div class="children"><div class="category-box">
-            <a class="category-link" href="/categories/CTF/qctf/">
-                qctf
-                <div class="category-count">2</div>
-            </a>
-        
             <a class="category-link" href="/categories/CTF/moectf2025/">
                 moectf2025
                 <div class="category-count">1</div>
+            </a>
+        
+            <a class="category-link" href="/categories/CTF/qctf/">
+                qctf
+                <div class="category-count">2</div>
             </a>
         
             <a class="category-link" href="/categories/CTF/wiki/">
@@ -275,7 +275,7 @@
 <p><em>板子作者：CSDN-晴友读钟</em></p>
 <h2 id="预处理字符串"><a href="#预处理字符串" class="headerlink" title="预处理字符串"></a>预处理字符串</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">replace_func</span>(<span class="params"><span class="keyword">match</span></span>):</span><br><span class="line">    shift = <span class="number">2</span> <span class="comment">#shift是指第一个未知数和0的差，例如：如果题目中第一个未知数是v2（如果是v3），那么shift就设置成2（就设置成3）</span></span><br><span class="line">    index = <span class="built_in">int</span>(<span class="keyword">match</span>.group(<span class="number">1</span>)) - shift</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">str</span>(<span class="string">f&#x27;v[<span class="subst">&#123;index&#125;</span>]&#x27;</span>)  <span class="comment"># 返回字符串&#x27;v[a后数字-1]&#x27;，用其替换匹配到的an</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    s1 = <span class="string">&quot;&quot;</span>  <span class="comment"># 定义包含an的字符串</span></span><br><span class="line">s1 = re.sub(<span class="string">r&#x27;v(2[0-9]|1[0-9]|[1-9])&#x27;</span>, replace_func, s1)</span><br><span class="line"><span class="comment"># sub函数参数, pattern、repl、string分别表示：正则表达式匹配规则、替换后结果（可以是函数也可以是常量）、要被查找替换的原始字符串</span></span><br><span class="line">s1 = re.sub(<span class="string">&#x27;!&#x27;</span>, <span class="string">&#x27;=&#x27;</span>, s1) <span class="comment">#有些题目给的条件的方程是用&#x27;||&#x27;关系运算符连接的不等式方程，需要用这一行代码将&#x27;!&#x27;替换成&#x27;=&#x27;变成等式方程</span></span><br><span class="line">res = s1.split(<span class="string">&#x27;| | &#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure>
 
-<p>**（ida）*<em>将整串条件复制过来放进s1中之后，把多余的换行和空格删除掉</em>（shift+tab删除缩进）*，形成一连串的由关系运算符连接的条件；</p>
+<p><strong>（ida）</strong> 将整串条件复制过来放进s1中之后，把多余的换行和空格删除掉*（shift+tab删除缩进）*，形成一连串的由关系运算符连接的条件；</p>
 <p>接着你根据条件中具体的关系运算符，到底是”&amp;&amp;”还是”||”来使用split()函数将每个方程分隔开形成列表</p>
 <p>在这里你需要仔细注意一下方程中的”||”中间有没有空格，如果有那你用的split()函数也得加上空格，即s1.split(‘| |’)，因为你要让split()函数正确地找到分隔符</p>
 <p>然后打印res就可以输出分割好的方程列表</p>
