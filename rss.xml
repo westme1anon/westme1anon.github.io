@@ -1,0 +1,861 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>wes1</title><description>ctfer</description><link>https://www.wes1.cn/</link><language>en</language><item><title>逆向作业#4</title><link>https://www.wes1.cn/posts/%E9%80%86%E5%90%91%E4%BD%9C%E4%B8%9A4/</link><guid isPermaLink="true">https://www.wes1.cn/posts/%E9%80%86%E5%90%91%E4%BD%9C%E4%B8%9A4/</guid><description>校队逆向作业#4：花指令与壳</description><pubDate>Thu, 20 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;一道非常简单的去花&lt;/h2&gt;
+&lt;p&gt;打开ida发现标红；&lt;/p&gt;
+&lt;p&gt;4010d4jmp的地址错误，而上面很明显是花指令标志；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251120152546747.DVKc3cYc_1Xby2p.webp&quot; alt=&quot;image-20251120152546747&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;jz&lt;/code&gt;和&lt;code&gt;jnz&lt;/code&gt;互补，必有一个执行，所以4010D4的字节一定不会被执行，nop掉这个字节即可；&lt;/p&gt;
+&lt;p&gt;然后再对函数头&lt;code&gt;_main&lt;/code&gt;按U再按P重定义；&lt;/p&gt;
+&lt;p&gt;就能正常按F5反编译了；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251120153231761.BiEK6wxV_2k3UM7.webp&quot; alt=&quot;image-20251120153231761&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;分析加密，可以看到是先对字符串每两字节交换位置，再逐字节异或0x30，再与密文比较；&lt;/p&gt;
+&lt;p&gt;解密：先用cyberchef对密文异或0x30，再复制代码换位即可；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+#include&amp;lt;string&amp;gt;
+#include&amp;lt;algorithm&amp;gt;
+#include&amp;lt;vector&amp;gt;
+#include&amp;lt;cstdint&amp;gt;
+using namespace std;
+
+string t=&quot;SNCSFTJ{su_tujknB_tyse}s&quot;;
+
+int main()
+{
+    for (int  i = 0; i &amp;lt; t.size() / 2; ++i )
+  {
+    char v5 = t[2 * i];
+    t[2 * i] = t[2 * i + 1];
+    t[2 * i + 1] = v5;
+  }
+  cout&amp;lt;&amp;lt;t;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;NSSCTF{Just_junk_Bytess};&lt;/p&gt;
+&lt;h2&gt;一道非常简单的壳&lt;/h2&gt;
+&lt;p&gt;DIE查壳，64位程序，UPX壳；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251121162552509.IvG_pnft_Z5gfVf.webp&quot; alt=&quot;image-20251121162552509&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;机脱&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;sudo ./upx -d C:\Users\sjx\Desktop\ctf\例会作业\#4\作业\一道非常简单的壳\easyre.exe&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251121162931351.Bf6TEmqs_ZUzk86.webp&quot; alt=&quot;image-20251121162931351&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;手脱&lt;/h3&gt;
+&lt;p&gt;x64dbg打开，先寻找入口点；&lt;/p&gt;
+&lt;p&gt;追到pushad处，在push结束的栈顶下硬件断点，再按F9寻找popad；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122180133161.CvApANp5_Zay15l.webp&quot; alt=&quot;image-20251122180133161&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122193001304.BrQEkKr0_20jNPN.webp&quot; alt=&quot;image-20251122193001304&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;硬件断点命中，明显jmp_401500是大跳转；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122193150294.Bt5VTHAs_2dvS0m.webp&quot; alt=&quot;image-20251122193150294&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;F4过去，点进地址开始dump；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122193938807.fi1C8g3__Z1r00hU.webp&quot; alt=&quot;image-20251122193938807&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;把标红的删了，rebuild PE,再fix dump；&lt;/p&gt;
+&lt;p&gt;拖入ida就能正常分析了；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122194438240.DrTqNtUl_13r3Ik.webp&quot; alt=&quot;image-20251122194438240&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;解密&lt;/h3&gt;
+&lt;p&gt;根本不让输入，那么查找字符串；&lt;/p&gt;
+&lt;p&gt;找到一个part2;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251121172018182&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;左边函数表发现part1；&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251121172202975&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;像16进制，解一下得&lt;code&gt;XPU{galf&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;拼接得XPU{galfd_0n3_4nd_tw0}；&lt;/p&gt;
+&lt;h2&gt;N1CTF2020 - oflo&lt;/h2&gt;
+&lt;p&gt;打开ida发现标红；&lt;/p&gt;
+&lt;p&gt;400bb1的jmp很明显是花，分析发现执行到这里会直接jmp到+1位置，也就等效为不jmp，直接顺序运行，但跳过400bb1；&lt;/p&gt;
+&lt;p&gt;那么直接nop400bb1即可；&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251120153954571&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;在重定义一下，红变少了，应该对了；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122201820879.q6fzVG2J_Z28np7x.webp&quot; alt=&quot;image-20251122201820879&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;400BB7的call后面有三字节未定义很奇怪，分析一下；&lt;/p&gt;
+&lt;p&gt;call进的400BBF中先把在栈顶的地址400BBC（call的下一条指令地址）推栈到外部rax，再对rax+1，再压栈，&lt;/p&gt;
+&lt;p&gt;则call返回的地址就偏移了一字节到400BBD，这个的地址直接jmp到400BD1;&lt;/p&gt;
+&lt;p&gt;那么&lt;s&gt;盲猜&lt;/s&gt;先假定return前的都没用；就等价于nop掉call和其后面的一个字节；&lt;/p&gt;
+&lt;p&gt;红又少了，变成了一个jmp，又感觉对了；&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251120160348713&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;还有个一样的花，一样改掉；&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251120160436821&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;又出现一样的花，继续nop；&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;image-20251120160842302&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;再往下翻，注意到&lt;code&gt;call mprotect&lt;/code&gt;,可能是要修改地址了，进附近函数分析一下；&lt;/p&gt;
+&lt;p&gt;修改后重定义即可f5反编译；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251122205946698.DssrV_mL_ZT3GGi.webp&quot; alt=&quot;image-20251122205946698&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;接下来太难了看wp了，不写了qwq；&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先调用 &lt;code&gt;sub_4008B9()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;接下来从输入读取 19 字节&lt;/li&gt;
+&lt;li&gt;调用 &lt;code&gt;mprotect()&lt;/code&gt; 修改 &lt;code&gt;main &amp;amp; 0xFFFFC000&lt;/code&gt; 处权限为 &lt;code&gt;r | w | x&lt;/code&gt;，由于权限控制粒度为内存页，因此这里实际上会修改一整张内存页的权限&lt;/li&gt;
+&lt;li&gt;修改 &lt;code&gt;sub_400A69()&lt;/code&gt; 开头的 10 个字节&lt;/li&gt;
+&lt;li&gt;调用 &lt;code&gt;sub_400A69()&lt;/code&gt; 检查 flag&lt;/li&gt;
+&lt;/ul&gt;
+</content:encoded></item><item><title>花指令</title><link>https://www.wes1.cn/posts/%E8%8A%B1%E6%8C%87%E4%BB%A4/</link><guid isPermaLink="true">https://www.wes1.cn/posts/%E8%8A%B1%E6%8C%87%E4%BB%A4/</guid><description>花指令总结，长期更新。</description><pubDate>Fri, 14 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;花指令总结&lt;/h1&gt;
+&lt;h2&gt;&lt;em&gt;0x00 简介&lt;/em&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;花指令&lt;/strong&gt;&lt;s&gt;是区&lt;/s&gt;是干扰反编译器正常分析的人为注入的垃圾指令，出题人通过插入一些垃圾（也可能会执行）汇编代码来让&lt;strong&gt;反编译器错误反编译&lt;/strong&gt;，而&lt;strong&gt;不会干扰程序正常执行&lt;/strong&gt;；&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;修改花指令&lt;/strong&gt;相当于&lt;strong&gt;修改（一般是简化）程序结构&lt;/strong&gt;但&lt;strong&gt;不改变程序原有的执行逻辑&lt;/strong&gt;（本来就是正确的，只是ida弄错了），**易于（即改成ida能分析正确的样子）**我们的ida爹反汇编正确。&lt;/p&gt;
+&lt;h2&gt;0x01   100%跳转到_地址+x&lt;/h2&gt;
+&lt;p&gt;特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;jz/jnz/jmp等跳转指令后接（&lt;strong&gt;函数地址+数字&lt;/strong&gt;）&lt;/li&gt;
+&lt;li&gt;jz等条件跳转100%执行，或jz和jnz这种互补的条件跳转连着出现，即&lt;strong&gt;强制执行条件跳转&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;原理：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;强制跳转的正常函数&lt;/strong&gt;的字节码前面部被添上了垃圾字节，这个垃圾字节&lt;strong&gt;永远不会执行&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;但反编译器不知道（地址+x）跳转是100%的，只会优先按正常执行顺序分析的字节*（原因可能是先执行等等）*&lt;/li&gt;
+&lt;li&gt;从而把垃圾指令当正常指令分析，把后面的东西全部带歪；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;解决办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;nop掉强制跳转的正常函数前面的垃圾字节，再重定义（对下面的标红的字节拖一下按c强转成code，再返回函数头按u再按p）即可；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对于一堆&lt;strong&gt;重复&lt;/strong&gt;的这样的花指令，可以&lt;strong&gt;写py脚本批量处理&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import idautils
+import idc
+
+def my_nop(addr, endaddr):  
+    while addr &amp;lt; endaddr:
+        patch_byte(addr, 0x90)
+        addr += 1
+
+pattern = &quot;E8 0A 00 00 00 E8 EB 0C 00 00 E8 F6 FF FF FF&quot;   #重复花指令的字节串
+cur_addr = 0x456000		#开始地址
+end_addr = 0x467894		#结束地址
+
+while cur_addr&amp;lt;end_addr:
+    cur_addr = idc.find_binary(cur_addr,SEARCH_DOWN,pattern)
+    print(&quot;patch address: &quot; + str(cur_addr)) # 打印提示信息
+    if cur_addr == idc.BADADDR:
+        break
+    else:
+        my_nop(cur_addr+5,cur_addr+6)  #想要nop的字节
+        my_nop(cur_addr+8,cur_addr+14)  #想要nop的字节
+    cur_addr = idc.next_head(cur_addr)
+# from https://www.52pojie.cn/thread-1512089-1-1.html
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;startaddr = 0x????
+endaddr = 0x????
+
+for i in range(startaddr,endaddr)
+​	if get_wide_byte(i) == 0xEB
+​		if get_wide_byte(i+1) == 0xFF #嵌套判断输出（加精度）
+​			patch_byte(i,0x90)
+​			print(&quot;[+] addr {} is patched&quot;.format(hex(i)) #格式化输出提示
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;使用IDA自带的脚本编辑器：&lt;/p&gt;
+&lt;p&gt;IDA Pro提供了一个简单的脚本编辑器，可以用来编写和执行Python脚本：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;打开脚本编辑器&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在IDA的菜单栏中，选择“File”-&amp;gt;“Script file”选项。这将打开一个文件选择对话框，允许你选择一个Python脚本文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;执行脚本&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;选择你要执行的Python脚本文件，然后点击“Open”按钮。IDA会自动加载并执行该脚本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;举例：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;from 闻花识女人 &lt;em&gt;2025vn招新赛&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251115200727288.DllqOR20_Z1XjDuN.webp&quot; alt=&quot;image-20251115200727288&quot; /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;test&lt;/code&gt;命令将两个操作数进行逻辑与运算，并根据运算结果设置相关的标志位。但是，Test命令的两个操作数&lt;strong&gt;不会&lt;/strong&gt;被改变。运算结果在设置过相关标记位后会被丢弃。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TEST AX,BX&lt;/code&gt; 与&lt;code&gt;AND AX,BX&lt;/code&gt;命令有相同效果，只是Test指令不改变AX和BX的内容，而AND指令会把结果保存到AX中。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;rbx自身异或必然返回0，再test两个0必然也返回0，100%执行jz；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;nop掉 2cc4的e9 或 jnz那一行，再重定义即可；&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;from bili:UKFC战队&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251115203040563.CQLYA3Su_Z25IlWR.webp&quot; alt=&quot;image-20251115203040563&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;4188f9的jz和jnz互补，必有一个执行；&lt;/li&gt;
+&lt;li&gt;nop _18fd，其他同上；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;0x02 废物call玩栈空间偏移return&lt;/h2&gt;
+&lt;p&gt;特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;call $+5&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;接着&lt;em&gt;唐突&lt;/em&gt;&lt;code&gt;pop xxx&lt;/code&gt;+ 修改pop出的内容 +&lt;code&gt;push xxx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;retn&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;原理：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;CALL指令的执行步骤&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;保存返回地址&lt;/strong&gt;：将当前指令的下一条指令地址（IP或CS:IP）压入栈中。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;跳转到目标地址&lt;/strong&gt;：根据CALL指令的目标地址，修改IP或CS:IP寄存器的值。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;call的作用是将程序的执行流程跳转到指定的子程序地址，并在子程序执行完毕后通过&lt;strong&gt;RET指令&lt;/strong&gt;返回到调用点继续执行。CALL指令与JMP指令类似，&lt;strong&gt;但增加了返回地址的保存功能&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;call的字节码长度一般是5，&lt;code&gt;call $+5&lt;/code&gt; (&lt;em&gt;我的理解&lt;/em&gt; $相当与相对路径)等于什么也没执行，相当于顺序执行下去，&lt;strong&gt;除了将call指令的下一个地址压到了栈&lt;/strong&gt;；&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;push/call等入栈的东西会优先存储在栈顶，push弹栈也是先弹栈顶&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接着pop弹栈并将弹出的地址（即刚才call压栈的地址）存在一个寄存器里；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对这个寄存器进行修改；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;push把修改后的寄存器压入栈；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;return返回到修改后的地址；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;这样就修改了call的return地址，但是ida默认call的返回地址不会被修改，这样就可以给&lt;strong&gt;垃圾指令&lt;/strong&gt;留下空间，这些垃圾指令不会被执行但会被ida错误循序分析；&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;修改方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;既然call是废物，那么把call和后面的一堆不执行的垃圾指令（到return的地址）全nop了就行，函数就会正确的顺序执行，也能正常分析&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;举例：&lt;/p&gt;
+&lt;p&gt;1.from dirty_flower&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251115211807102.BGgjCrlw_ZuXhpy.webp&quot; alt=&quot;image-20251115211807102&quot; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分析如上，nop掉4012f2到401302即可；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;0x03 重复计算&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109173230475.DlWQzuqM_Z1lTASA.webp&quot; alt=&quot;image-20251115211504773&quot; /&gt;&lt;/p&gt;
+</content:encoded></item><item><title>z3求解器</title><link>https://www.wes1.cn/posts/z3/</link><guid isPermaLink="true">https://www.wes1.cn/posts/z3/</guid><description>z3的学习与使用</description><pubDate>Fri, 14 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;0x01 基本用法&lt;/h1&gt;
+&lt;h2&gt;求解器&lt;/h2&gt;
+&lt;p&gt;在使用 &lt;code&gt;z3&lt;/code&gt; 进行约束求解之前我们首先需要获得一个 &lt;em&gt;求解器&lt;/em&gt; 类实例，&lt;strong&gt;本质上其实就是一组约束的集合&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; s = z3.Solver()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;变量&lt;/h2&gt;
+&lt;p&gt;再创建用于解方程的变量&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import z3;
+x = z3.Int(name = &apos;x&apos;)   #x是整形变量
+y = z3.Real(name = &apos;y&apos;)   #y是实数
+z = z3.BitVec(name= &apos;z&apos;, bv = 32)   #z是长度为32位的向量（向量长度需初始化）
+p = z3.Bool(name = &apos;p&apos;)   #p是bool型
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;整型与实数类型变量之间可以互相进行转换：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;z3.ToReal(x)
+z3.ToInt(y)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;还能创建常量&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;z3.IntVal(val = 114514) #int类型常量
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;添加约束&lt;/h2&gt;
+&lt;p&gt;用add()方法为指定求解器添加约束，条件为初始化中变量组成的式子；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;s.add(x + 5 == 111)
+s.add(y + 3 == x)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;bool类型还可逻辑运算，暂且不表；&lt;/p&gt;
+&lt;h2&gt;约束求解&lt;/h2&gt;
+&lt;p&gt;使用check()方法寻找是否有解&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; s.check()
+sat  #有解
+# 返回unsat则无解
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;若有解则可以通过model()方法获取一组解；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; if s.check() == z3.sat:
+   		print(s.model())
+[y = 103, x = 106]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1&gt;0x02 for CTF&lt;/h1&gt;
+&lt;h2&gt;初始化&lt;/h2&gt;
+&lt;p&gt;不用写z3.前缀；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from z3 import *
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;用循环创建变量&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;v = [Int(f&apos;v{i}&apos;)    for i in range(0, 16)]  #f&apos;{}&apos;用来格式化字符串，传入后面的i
+# or
+x = [0] * 16
+for i in range(16):
+    x[i] = Int(&apos;x[&apos; + str(i) + &apos;]&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;求解&lt;/h2&gt;
+&lt;p&gt;model()方法会返回一个列表，比如&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[i11i1Iii1I1[14] = 49,
+ i11i1Iii1I1[28] = 125,
+ i11i1Iii1I1[27] = 51,
+...
+ i11i1Iii1I1[7] = 54]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;接下来要做的是将解转化为字符，但由于该列表中的元素是z3中的特殊类型，需要先转换为python中的整数类型才能使用chr()函数转为对应字符;&lt;/p&gt;
+&lt;p&gt;但列表中解不是按未知参数或数组大小排序的，解决办法是循环访问列表中的值，将其作为索引去访问ans列表，即此处的【&lt;strong&gt;ans[i]&lt;/strong&gt;】，然后使用as_long()函数将解的类型转为python中的int类型，最后使用chr()函数转为对应字符；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if solver.check() == sat: #check()方法用来判断是否有解，sat(即satisify)表示满足有解
+    ans = solver.model() #model()方法得到解
+    for i in v:
+        print(chr(ans[i].as_long()), end=&apos;&apos;)
+#一般不会无解，如果无解八成是未知数变量的类型不符合，或约束方程添加错误
+# or
+if z3.Solver.check(s) == z3.sat: 
+    ans = z3.Solver.model(s) 
+    for i in i11i1Iii1I1:
+        print(chr(ans[i].as_long()), end=&apos;&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1&gt;0x03 板子&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;原文链接：https://blog.csdn.net/liKeQing1027520/article/details/138047537&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;板子作者：CSDN-晴友读钟&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;预处理字符串&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;import re
+
+def replace_func(match):
+    shift = 2 #shift是指第一个未知数和0的差，例如：如果题目中第一个未知数是v2（如果是v3），那么shift就设置成2（就设置成3）
+    index = int(match.group(1)) - shift
+    return str(f&apos;v[{index}]&apos;)  # 返回字符串&apos;v[a后数字-1]&apos;，用其替换匹配到的an
+
+if __name__ == &apos;__main__&apos;:
+    s1 = &quot;&quot;  # 定义包含an的字符串
+s1 = re.sub(r&apos;v(2[0-9]|1[0-9]|[1-9])&apos;, replace_func, s1)
+# sub函数参数, pattern、repl、string分别表示：正则表达式匹配规则、替换后结果（可以是函数也可以是常量）、要被查找替换的原始字符串
+s1 = re.sub(&apos;!&apos;, &apos;=&apos;, s1) #有些题目给的条件的方程是用&apos;||&apos;关系运算符连接的不等式方程，需要用这一行代码将&apos;!&apos;替换成&apos;=&apos;变成等式方程
+res = s1.split(&apos;| | &apos;)
+print(res)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;（ida）&lt;/strong&gt; 将整串条件复制过来放进s1中之后，把多余的换行和空格删除掉*（shift+tab删除缩进）*，形成一连串的由关系运算符连接的条件；&lt;/p&gt;
+&lt;p&gt;接着你根据条件中具体的关系运算符，到底是&quot;&amp;amp;&amp;amp;&quot;还是&quot;||&quot;来使用split()函数将每个方程分隔开形成列表&lt;/p&gt;
+&lt;p&gt;在这里你需要仔细注意一下方程中的&quot;||&quot;中间有没有空格，如果有那你用的split()函数也得加上空格，即s1.split(&apos;| |&apos;)，因为你要让split()函数正确地找到分隔符&lt;/p&gt;
+&lt;p&gt;然后打印res就可以输出分割好的方程列表&lt;/p&gt;
+&lt;h2&gt;求解&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;from z3 import *
+
+def solver_eng(fc):
+    # 创建解释器对象
+    solver = Solver()
+    # 添加约束方程
+    for i in range(len(fc)):
+        solver.add(eval(fc[i])) #eval函数会将字符串形式的方程转换为z3模块能解析的方程
+# 求解并转化为字符输出，得到flag
+
+if solver.check() == sat:  # check()方法用来判断是否有解，sat(即satisify)表示满足有解
+    ans = solver.model()  # model()方法得到解
+    for i in v:
+        print(chr(ans[i].as_long()), end=&apos;&apos;)
+# 一般不会无解，如果无解八成是未知数变量的类型不符合，或约束方程添加错误
+else:
+    print(&quot;no ans!&quot;)
+    
+if __name__ == &apos;__main__&apos;:
+    # 设置方程，请用脚本将条件中的所有方程处理成列表，然后赋值给fc列表（这样你就不用一个一个方程慢慢去复制了）
+    fc = []
+    # 创建未知数变量
+    v = [Int(f&apos;v{i}&apos;) for i in range(0, len(fc))]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;把这一整个列表复制下来，赋值给下面这个脚本的fc列表，直接运行就能出结果，这样脚本的通用性和便捷性大大提升了。&lt;/p&gt;
+</content:encoded></item><item><title>逆向作业#3</title><link>https://www.wes1.cn/posts/%E9%80%86%E5%90%91%E4%BD%9C%E4%B8%9A3/</link><guid isPermaLink="true">https://www.wes1.cn/posts/%E9%80%86%E5%90%91%E4%BD%9C%E4%B8%9A3/</guid><description>校队逆向作业#3：多语言逆向</description><pubDate>Tue, 11 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;rustyapp&lt;/h1&gt;
+&lt;p&gt;shift+f12追一下显示的输入字符串，找到加密函数；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112175226672.D96zBPOt_2mrvaG.webp&quot; alt=&quot;image-20251112175226672&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;对不明函数打断点动调一下，找一下逻辑，35行是打印，37行是输入并读取，v22存输入，下个硬件断点&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251113213759456.CLhrvsGm_Z1L0Peg.webp&quot; alt=&quot;image-20251113213759456&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;最后比较是if（v2），v2==0就成功，对v2按x查找一下，有一个v2|=v15^0x21,那么v15都要xor0x21==0，即v15都是0x21，即输入的每一字符xor后面的字符串都要是0x21；&lt;/p&gt;
+&lt;p&gt;硬件断点一直不触发，应该只有一层加密；&lt;/p&gt;
+&lt;p&gt;根据异或的对称性即可直接解密；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251113214348658.D1l0ABzr_Z1DISmw.webp&quot; alt=&quot;image-20251113214348658&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251113215912245.BIfCTm5J_Z9hwDz.webp&quot; alt=&quot;image-20251113215912245&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;STRU~MHCS@SX~BNSD~@RRDSU&lt;/p&gt;
+&lt;h1&gt;蛇年的本命语言&lt;/h1&gt;
+&lt;p&gt;先将封装的.exe文件用pyinstx转为.pyc，出现版本问题，换用-ng；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251113223720376.xTnMHHMY_1lPFT3.webp&quot; alt=&quot;image-20251113223720376&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;再用uncompyle6将.pyc转成.py;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251113224322153.BByNemxX_Z1H374G.webp&quot; alt=&quot;image-20251113224322153&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;修复一下.py,很明显的z3&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251114121121797.CnG9nUnP_Zl53S2.webp&quot; alt=&quot;image-20251114121121797&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;写脚本解一下；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import z3;
+i11i1Iii1I1 = [0] * 30
+for i in range(30):
+  i11i1Iii1I1[i] = z3.Int(name = &apos;i11i1Iii1I1[&apos; + str(i) + &apos;]&apos;)
+s = z3.Solver()
+s.add(7 * i11i1Iii1I1[0] == 504,
+​     9 * i11i1Iii1I1[0] - 5 * i11i1Iii1I1[1] == 403,
+​     2 * i11i1Iii1I1[0] - 5 * i11i1Iii1I1[1] + 10 * i11i1Iii1I1[2] == 799,
+​     3 * i11i1Iii1I1[0] + 8 * i11i1Iii1I1[1] + 15 * i11i1Iii1I1[2] + 20 * i11i1Iii1I1[3] == 2938,
+​     5 * i11i1Iii1I1[0] + 15 * i11i1Iii1I1[1] + 20 * i11i1Iii1I1[2] - 19 * i11i1Iii1I1[3] + 1 * i11i1Iii1I1[4] == 2042,
+​     7 * i11i1Iii1I1[0] + 1 * i11i1Iii1I1[1] + 9 * i11i1Iii1I1[2] - 11 * i11i1Iii1I1[3] + 2 * i11i1Iii1I1[4] + 5 * i11i1Iii1I1[5] == 1225,
+​     11 * i11i1Iii1I1[0] + 22 * i11i1Iii1I1[1] + 33 * i11i1Iii1I1[2] + 44 * i11i1Iii1I1[3] + 55 * i11i1Iii1I1[4] + 66 * i11i1Iii1I1[5] - 77 * i11i1Iii1I1[6] == 7975,
+​     21 * i11i1Iii1I1[0] + 23 * i11i1Iii1I1[1] + 3 * i11i1Iii1I1[2] + 24 * i11i1Iii1I1[3] - 55 * i11i1Iii1I1[4] + 6 * i11i1Iii1I1[5] - 7 * i11i1Iii1I1[6] + 15 * i11i1Iii1I1[7] == 229,
+​     2 * i11i1Iii1I1[0] + 26 * i11i1Iii1I1[1] + 13 * i11i1Iii1I1[2] + 0 * i11i1Iii1I1[3] - 65 * i11i1Iii1I1[4] + 15 * i11i1Iii1I1[5] + 29 * i11i1Iii1I1[6] + 1 * i11i1Iii1I1[7] + 20 * i11i1Iii1I1[8] == 2107,
+​     10 * i11i1Iii1I1[0] + 7 * i11i1Iii1I1[1] + -9 * i11i1Iii1I1[2] + 6 * i11i1Iii1I1[3] + 7 * i11i1Iii1I1[4] + 1 * i11i1Iii1I1[5] + 22 * i11i1Iii1I1[6] + 21 * i11i1Iii1I1[7] - 22 * i11i1Iii1I1[8] + 30 * i11i1Iii1I1[9] == 4037,
+​     15 * i11i1Iii1I1[0] + 59 * i11i1Iii1I1[1] + 56 * i11i1Iii1I1[2] + 66 * i11i1Iii1I1[3] + 7 * i11i1Iii1I1[4] + 1 * i11i1Iii1I1[5] - 122 * i11i1Iii1I1[6] + 21 * i11i1Iii1I1[7] + 32 * i11i1Iii1I1[8] + 3 * i11i1Iii1I1[9] - 10 * i11i1Iii1I1[10] == 4950,
+​     13 * i11i1Iii1I1[0] + 66 * i11i1Iii1I1[1] + 29 * i11i1Iii1I1[2] + 39 * i11i1Iii1I1[3] - 33 * i11i1Iii1I1[4] + 13 * i11i1Iii1I1[5] - 2 * i11i1Iii1I1[6] + 42 * i11i1Iii1I1[7] + 62 * i11i1Iii1I1[8] + 1 * i11i1Iii1I1[9] - 10 * i11i1Iii1I1[10] + 11 * i11i1Iii1I1[11] == 12544,
+​     23 * i11i1Iii1I1[0] + 6 * i11i1Iii1I1[1] + 29 * i11i1Iii1I1[2] + 3 * i11i1Iii1I1[3] - 3 * i11i1Iii1I1[4] + 63 * i11i1Iii1I1[5] - 25 * i11i1Iii1I1[6] + 2 * i11i1Iii1I1[7] + 32 * i11i1Iii1I1[8] + 1 * i11i1Iii1I1[9] - 10 * i11i1Iii1I1[10] + 11 * i11i1Iii1I1[11] - 12 * i11i1Iii1I1[12] == 6585,
+​     223 * i11i1Iii1I1[0] + 6 * i11i1Iii1I1[1] - 29 * i11i1Iii1I1[2] - 53 * i11i1Iii1I1[3] - 3 * i11i1Iii1I1[4] + 3 * i11i1Iii1I1[5] - 65 * i11i1Iii1I1[6] + 0 * i11i1Iii1I1[7] + 36 * i11i1Iii1I1[8] + 1 * i11i1Iii1I1[9] - 15 * i11i1Iii1I1[10] + 16 * i11i1Iii1I1[11] - 18 * i11i1Iii1I1[12] + 13 * i11i1Iii1I1[13] == 6893,
+​     29 * i11i1Iii1I1[0] + 13 * i11i1Iii1I1[1] - 9 * i11i1Iii1I1[2] - 93 * i11i1Iii1I1[3] + 33 * i11i1Iii1I1[4] + 6 * i11i1Iii1I1[5] + 65 * i11i1Iii1I1[6] + 1 * i11i1Iii1I1[7] - 36 * i11i1Iii1I1[8] + 0 * i11i1Iii1I1[9] - 16 * i11i1Iii1I1[10] + 96 * i11i1Iii1I1[11] - 68 * i11i1Iii1I1[12] + 33 * i11i1Iii1I1[13] - 14 * i11i1Iii1I1[14] == 1883,
+​     69 * i11i1Iii1I1[0] + 77 * i11i1Iii1I1[1] - 93 * i11i1Iii1I1[2] - 12 * i11i1Iii1I1[3] + 0 * i11i1Iii1I1[4] + 0 * i11i1Iii1I1[5] + 1 * i11i1Iii1I1[6] + 16 * i11i1Iii1I1[7] + 36 * i11i1Iii1I1[8] + 6 * i11i1Iii1I1[9] + 19 * i11i1Iii1I1[10] + 66 * i11i1Iii1I1[11] - 8 * i11i1Iii1I1[12] + 38 * i11i1Iii1I1[13] - 16 * i11i1Iii1I1[14] + 15 * i11i1Iii1I1[15] == 8257,
+​     23 * i11i1Iii1I1[0] + 2 * i11i1Iii1I1[1] - 3 * i11i1Iii1I1[2] - 11 * i11i1Iii1I1[3] + 12 * i11i1Iii1I1[4] + 24 * i11i1Iii1I1[5] + 1 * i11i1Iii1I1[6] + 6 * i11i1Iii1I1[7] + 14 * i11i1Iii1I1[8] - 0 * i11i1Iii1I1[9] + 1 * i11i1Iii1I1[10] + 68 * i11i1Iii1I1[11] - 18 * i11i1Iii1I1[12] + 68 * i11i1Iii1I1[13] - 26 * i11i1Iii1I1[14] + 15 * i11i1Iii1I1[15] - 16 * i11i1Iii1I1[16] == 5847,
+​     24 * i11i1Iii1I1[0] + 0 * i11i1Iii1I1[1] - 1 * i11i1Iii1I1[2] - 15 * i11i1Iii1I1[3] + 13 * i11i1Iii1I1[4] + 4 * i11i1Iii1I1[5] + 16 * i11i1Iii1I1[6] + 67 * i11i1Iii1I1[7] + 146 * i11i1Iii1I1[8] - 50 * i11i1Iii1I1[9] + 16 * i11i1Iii1I1[10] + 6 * i11i1Iii1I1[11] - 1 * i11i1Iii1I1[12] + 69 * i11i1Iii1I1[13] - 27 * i11i1Iii1I1[14] + 45 * i11i1Iii1I1[15] - 6 * i11i1Iii1I1[16] + 17 * i11i1Iii1I1[17] == 18257,
+​     25 * i11i1Iii1I1[0] + 26 * i11i1Iii1I1[1] - 89 * i11i1Iii1I1[2] + 16 * i11i1Iii1I1[3] + 19 * i11i1Iii1I1[4] + 44 * i11i1Iii1I1[5] + 36 * i11i1Iii1I1[6] + 66 * i11i1Iii1I1[7] - 150 * i11i1Iii1I1[8] - 250 * i11i1Iii1I1[9] + 166 * i11i1Iii1I1[10] + 126 * i11i1Iii1I1[11] - 11 * i11i1Iii1I1[12] + 690 * i11i1Iii1I1[13] - 207 * i11i1Iii1I1[14] + 46 * i11i1Iii1I1[15] + 6 * i11i1Iii1I1[16] + 7 * i11i1Iii1I1[17] - 18 * i11i1Iii1I1[18] == 12591,
+​     5 * i11i1Iii1I1[0] + 26 * i11i1Iii1I1[1] + 8 * i11i1Iii1I1[2] + 160 * i11i1Iii1I1[3] + 9 * i11i1Iii1I1[4] - 4 * i11i1Iii1I1[5] + 36 * i11i1Iii1I1[6] + 6 * i11i1Iii1I1[7] - 15 * i11i1Iii1I1[8] - 20 * i11i1Iii1I1[9] + 66 * i11i1Iii1I1[10] + 16 * i11i1Iii1I1[11] - 1 * i11i1Iii1I1[12] + 690 * i11i1Iii1I1[13] - 20 * i11i1Iii1I1[14] + 46 * i11i1Iii1I1[15] + 6 * i11i1Iii1I1[16] + 7 * i11i1Iii1I1[17] - 18 * i11i1Iii1I1[18] + 19 * i11i1Iii1I1[19] == 52041,
+​     29 * i11i1Iii1I1[0] - 26 * i11i1Iii1I1[1] + 0 * i11i1Iii1I1[2] + 60 * i11i1Iii1I1[3] + 90 * i11i1Iii1I1[4] - 4 * i11i1Iii1I1[5] + 6 * i11i1Iii1I1[6] + 6 * i11i1Iii1I1[7] - 16 * i11i1Iii1I1[8] - 21 * i11i1Iii1I1[9] + 69 * i11i1Iii1I1[10] + 6 * i11i1Iii1I1[11] - 12 * i11i1Iii1I1[12] + 69 * i11i1Iii1I1[13] - 20 * i11i1Iii1I1[14] - 46 * i11i1Iii1I1[15] + 65 * i11i1Iii1I1[16] + 0 * i11i1Iii1I1[17] - 1 * i11i1Iii1I1[18] + 39 * i11i1Iii1I1[19] - 20 * i11i1Iii1I1[20] == 20253,
+​     45 * i11i1Iii1I1[0] - 56 * i11i1Iii1I1[1] + 10 * i11i1Iii1I1[2] + 650 * i11i1Iii1I1[3] - 900 * i11i1Iii1I1[4] + 44 * i11i1Iii1I1[5] + 66 * i11i1Iii1I1[6] - 6 * i11i1Iii1I1[7] - 6 * i11i1Iii1I1[8] - 21 * i11i1Iii1I1[9] + 9 * i11i1Iii1I1[10] - 6 * i11i1Iii1I1[11] - 12 * i11i1Iii1I1[12] + 69 * i11i1Iii1I1[13] - 2 * i11i1Iii1I1[14] - 406 * i11i1Iii1I1[15] + 651 * i11i1Iii1I1[16] + 2 * i11i1Iii1I1[17] - 10 * i11i1Iii1I1[18] + 69 * i11i1Iii1I1[19] - 0 * i11i1Iii1I1[20] + 21 * i11i1Iii1I1[21] == 18768,
+​     555 * i11i1Iii1I1[0] - 6666 * i11i1Iii1I1[1] + 70 * i11i1Iii1I1[2] + 510 * i11i1Iii1I1[3] - 90 * i11i1Iii1I1[4] + 499 * i11i1Iii1I1[5] + 66 * i11i1Iii1I1[6] - 66 * i11i1Iii1I1[7] - 610 * i11i1Iii1I1[8] - 221 * i11i1Iii1I1[9] + 9 * i11i1Iii1I1[10] - 23 * i11i1Iii1I1[11] - 102 * i11i1Iii1I1[12] + 6 * i11i1Iii1I1[13] + 2050 * i11i1Iii1I1[14] - 406 * i11i1Iii1I1[15] + 665 * i11i1Iii1I1[16] + 333 * i11i1Iii1I1[17] + 100 * i11i1Iii1I1[18] + 609 * i11i1Iii1I1[19] + 777 * i11i1Iii1I1[20] + 201 * i11i1Iii1I1[21] - 22 * i11i1Iii1I1[22] == 111844,
+​     1 * i11i1Iii1I1[0] - 22 * i11i1Iii1I1[1] + 333 * i11i1Iii1I1[2] + 4444 * i11i1Iii1I1[3] - 5555 * i11i1Iii1I1[4] + 6666 * i11i1Iii1I1[5] - 666 * i11i1Iii1I1[6] + 676 * i11i1Iii1I1[7] - 660 * i11i1Iii1I1[8] - 22 * i11i1Iii1I1[9] + 9 * i11i1Iii1I1[10] - 73 * i11i1Iii1I1[11] - 107 * i11i1Iii1I1[12] + 6 * i11i1Iii1I1[13] + 250 * i11i1Iii1I1[14] - 6 * i11i1Iii1I1[15] + 65 * i11i1Iii1I1[16] + 39 * i11i1Iii1I1[17] + 10 * i11i1Iii1I1[18] + 69 * i11i1Iii1I1[19] + 777 * i11i1Iii1I1[20] + 201 * i11i1Iii1I1[21] - 2 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] == 159029,
+​     520 * i11i1Iii1I1[0] - 222 * i11i1Iii1I1[1] + 333 * i11i1Iii1I1[2] + 4 * i11i1Iii1I1[3] - 56655 * i11i1Iii1I1[4] + 6666 * i11i1Iii1I1[5] + 666 * i11i1Iii1I1[6] + 66 * i11i1Iii1I1[7] - 60 * i11i1Iii1I1[8] - 220 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 73 * i11i1Iii1I1[11] + 1007 * i11i1Iii1I1[12] + 7777 * i11i1Iii1I1[13] + 2500 * i11i1Iii1I1[14] + 6666 * i11i1Iii1I1[15] + 605 * i11i1Iii1I1[16] + 390 * i11i1Iii1I1[17] + 100 * i11i1Iii1I1[18] + 609 * i11i1Iii1I1[19] + 99999 * i11i1Iii1I1[20] + 210 * i11i1Iii1I1[21] + 232 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 24 * i11i1Iii1I1[24] == 2762025,
+​     1323 * i11i1Iii1I1[0] - 22 * i11i1Iii1I1[1] + 333 * i11i1Iii1I1[2] + 4 * i11i1Iii1I1[3] - 55 * i11i1Iii1I1[4] + 666 * i11i1Iii1I1[5] + 666 * i11i1Iii1I1[6] + 66 * i11i1Iii1I1[7] - 660 * i11i1Iii1I1[8] - 220 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 3 * i11i1Iii1I1[11] + 100 * i11i1Iii1I1[12] + 777 * i11i1Iii1I1[13] + 2500 * i11i1Iii1I1[14] + 6666 * i11i1Iii1I1[15] + 605 * i11i1Iii1I1[16] + 390 * i11i1Iii1I1[17] + 100 * i11i1Iii1I1[18] + 609 * i11i1Iii1I1[19] + 9999 * i11i1Iii1I1[20] + 210 * i11i1Iii1I1[21] + 232 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 24 * i11i1Iii1I1[24] + 25 * i11i1Iii1I1[25] == 1551621,
+​     777 * i11i1Iii1I1[0] - 22 * i11i1Iii1I1[1] + 6969 * i11i1Iii1I1[2] + 4 * i11i1Iii1I1[3] - 55 * i11i1Iii1I1[4] + 666 * i11i1Iii1I1[5] - 6 * i11i1Iii1I1[6] + 96 * i11i1Iii1I1[7] - 60 * i11i1Iii1I1[8] - 220 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 3 * i11i1Iii1I1[11] + 100 * i11i1Iii1I1[12] + 777 * i11i1Iii1I1[13] + 250 * i11i1Iii1I1[14] + 666 * i11i1Iii1I1[15] + 65 * i11i1Iii1I1[16] + 90 * i11i1Iii1I1[17] + 100 * i11i1Iii1I1[18] + 609 * i11i1Iii1I1[19] + 999 * i11i1Iii1I1[20] + 21 * i11i1Iii1I1[21] + 232 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 24 * i11i1Iii1I1[24] + 25 * i11i1Iii1I1[25] - 26 * i11i1Iii1I1[26] == 948348,
+​     97 * i11i1Iii1I1[0] - 22 * i11i1Iii1I1[1] + 6969 * i11i1Iii1I1[2] + 4 * i11i1Iii1I1[3] - 56 * i11i1Iii1I1[4] + 96 * i11i1Iii1I1[5] - 6 * i11i1Iii1I1[6] + 96 * i11i1Iii1I1[7] - 60 * i11i1Iii1I1[8] - 20 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 3 * i11i1Iii1I1[11] + 10 * i11i1Iii1I1[12] + 707 * i11i1Iii1I1[13] + 250 * i11i1Iii1I1[14] + 666 * i11i1Iii1I1[15] + -9 * i11i1Iii1I1[16] + 90 * i11i1Iii1I1[17] + -2 * i11i1Iii1I1[18] + 609 * i11i1Iii1I1[19] + 0 * i11i1Iii1I1[20] + 21 * i11i1Iii1I1[21] + 2 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 24 * i11i1Iii1I1[24] + 25 * i11i1Iii1I1[25] - 26 * i11i1Iii1I1[26] + 27 * i11i1Iii1I1[27] == 777044,
+​     177 * i11i1Iii1I1[0] - 22 * i11i1Iii1I1[1] + 699 * i11i1Iii1I1[2] + 64 * i11i1Iii1I1[3] - 56 * i11i1Iii1I1[4] - 96 * i11i1Iii1I1[5] - 66 * i11i1Iii1I1[6] + 96 * i11i1Iii1I1[7] - 60 * i11i1Iii1I1[8] - 20 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 3 * i11i1Iii1I1[11] + 10 * i11i1Iii1I1[12] + 707 * i11i1Iii1I1[13] + 250 * i11i1Iii1I1[14] + 666 * i11i1Iii1I1[15] + -9 * i11i1Iii1I1[16] + 0 * i11i1Iii1I1[17] + -2 * i11i1Iii1I1[18] + 69 * i11i1Iii1I1[19] + 0 * i11i1Iii1I1[20] + 21 * i11i1Iii1I1[21] + 222 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 224 * i11i1Iii1I1[24] + 25 * i11i1Iii1I1[25] - 26 * i11i1Iii1I1[26] + 27 * i11i1Iii1I1[27] - 28 * i11i1Iii1I1[28] == 185016,
+​     77 * i11i1Iii1I1[0] - 2 * i11i1Iii1I1[1] + 6 * i11i1Iii1I1[2] + 6 * i11i1Iii1I1[3] - 96 * i11i1Iii1I1[4] - 9 * i11i1Iii1I1[5] - 6 * i11i1Iii1I1[6] + 96 * i11i1Iii1I1[7] - 0 * i11i1Iii1I1[8] - 20 * i11i1Iii1I1[9] + 99 * i11i1Iii1I1[10] + 3 * i11i1Iii1I1[11] + 10 * i11i1Iii1I1[12] + 707 * i11i1Iii1I1[13] + 250 * i11i1Iii1I1[14] + 666 * i11i1Iii1I1[15] + -9 * i11i1Iii1I1[16] + 0 * i11i1Iii1I1[17] + -2 * i11i1Iii1I1[18] + 9 * i11i1Iii1I1[19] + 0 * i11i1Iii1I1[20] + 21 * i11i1Iii1I1[21] + 222 * i11i1Iii1I1[22] + 23 * i11i1Iii1I1[23] - 224 * i11i1Iii1I1[24] + 26 * i11i1Iii1I1[25] - -58 * i11i1Iii1I1[26] + 27 * i11i1Iii1I1[27] - 2 * i11i1Iii1I1[28] + 29 * i11i1Iii1I1[29] == 130106)
+
+if z3.Solver.check(s) == z3.sat: 
+  ans = z3.Solver.model(s) 
+  for i in i11i1Iii1I1:
+​    print(chr(ans[i].as_long()), end=&apos;&apos;) #按顺序输出
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;H1Z1N1U1C1T1F1{1a6d275f7-463}1&lt;/p&gt;
+&lt;p&gt;有点问题，回看一下加密代码，分析一下；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from collections import Counter
+print(&quot;Welcome to HZNUCTF!!!&quot;)
+print(&quot;Plz input the flag:&quot;)
+inp = input()
+coutinp = Counter(inp)  #统计输入的字符串（flag）中每个字符出现的次数
+O0o00 = &quot;&quot;.join((str(coutinp[inpstr]) for inpstr in inp))  #将每个字符按在flag中出现的字数为掩码替换
+print(&quot;ans1: &quot;, end=&quot;&quot;)
+print(O0o00)
+iiIII = &quot;&quot;
+if O0o00 != &quot;111111116257645365477364777645752361&quot;:  #比较掩码
+    print(&quot;wrong_wrong!!!&quot;)
+    exit(1)
+for inpstr in inp:
+    if coutinp[inpstr] &amp;gt; 0:
+        iiIII += inpstr + str(coutinp[inpstr]) 
+        coutinp[inpstr] = 0
+#flag中每个重复的字符只输出第一次，并在后面加上重复次数
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;映射分析，H1Z1N1U1C1T1F1 {1 a6 d2 75 f7 -4 63 }1&lt;/p&gt;
+&lt;p&gt;​		  111111116257645365477364777645752361&lt;/p&gt;
+&lt;p&gt;第一个1对应H，第二个1对应Z，....,6都对应a......&lt;/p&gt;
+&lt;p&gt;手改一下，HZNUCTF{ad7fa-76a7-ff6a-fffa-7f7d6a}&lt;/p&gt;
+&lt;h1&gt;⽔果忍者&lt;/h1&gt;
+&lt;p&gt;dnspy打开Assembly-CSharp.dll文件&lt;/p&gt;
+&lt;p&gt;主类里翻到一个hint&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&quot;Locate the &apos;FlagContainer&apos; class in the Program Resource Manager&quot;,
+&quot;Submit in format: flag{xxxx}&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;找一下FlagContainer，其中&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[EncodedFlag(&quot;D1ucj0u!tqjwf!fohjoffsjoh!xj!epspqz!ju!gvo!2025&quot;)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;再找到main函数&lt;/p&gt;
+&lt;p&gt;调用了一个decode()函数，得到的值传给text&lt;/p&gt;
+&lt;p&gt;猜测text中即为flag，直接下断点动调；&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251114215051524.CNYJhkGk_1r9X6E.webp&quot; alt=&quot;image-20251114215051524&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;变量中直接看到flag内容，结合hint中的format，&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251114215310490.CVKIwW1i_ZwLxtD.webp&quot; alt=&quot;image-20251114215344714&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;flag{D1tbi0t_spive_engineering_wi_doropy_it_fun_2025}（好像没有检验程序？）&lt;/p&gt;
+&lt;h1&gt;cccc&lt;/h1&gt;
+&lt;p&gt;dnspy打开.dll,明显被混淆&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116130757247.BVVmYWEJ_ZOxUtS.webp&quot; alt=&quot;image-20251116130757247&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;使用de4dot脱壳，重新打开&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116131549791.BujtZoQa_ZJQdc2.webp&quot; alt=&quot;image-20251116131549791&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;无法调试，发现这是32位程序，重新找一个32位的dnspy打开&lt;/p&gt;
+&lt;p&gt;也报错，最后发现要将-clean的文件重命名成原来的才能动调，非常奇怪；&lt;/p&gt;
+&lt;p&gt;函数太多了难以分析，先找到main函数一步步动调；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116133809476.D2Jb2Rmg_Yfnmv.webp&quot; alt=&quot;image-20251116133809476&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;num中的值应该是密文；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116144536982.B3XuHlFn_2qH74o.webp&quot; alt=&quot;image-20251116144536982&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;前面的一大坨应该是对输入进行utf等的处理，先不管；&lt;/p&gt;
+&lt;p&gt;然后找到一个可疑text：&quot;doyouknowcsharp&quot;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116150828106.BHQBi_1b_Z1aqlwb.webp&quot; alt=&quot;image-20251116150828106&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;然后找到一个rc4；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;T0[] array = GClass0.smethod_3&amp;lt;T0, T1&amp;gt;(GClass0.smethod_0&amp;lt;T0, T1, T2&amp;gt;(gparam_0));
+		T1 t = 0;
+		T1 t2 = 0;
+		T0[] array2;   //输入
+		for (;;)
+		{
+			IL_132:
+			uint num = 965942686U;
+			for (;;)
+			{
+				uint num2;
+				switch ((num2 = (num ^ 1671582653U)) % 10U)
+				{
+				case 1U:
+				{
+					T1 t3 = 0;
+					num = (num2 * 2964175099U ^ 3088226582U);
+					continue;
+				}
+				case 2U:
+					num = (num2 * 2557159329U ^ 3766832993U);
+					continue;
+				case 3U:
+				{
+					T0 t4;
+					array[t2] = t4;
+					num = (num2 * 1977227374U ^ 428192606U);
+					continue;
+				}
+				case 4U:
+				{
+					T1 t3;
+					num = ((t3 &amp;gt;= gparam_1.Length) ? 135939119U : 530945064U);
+					continue;
+				}
+				case 5U:
+				{
+					T1 t3;
+					array2[t3] = (byte)(gparam_1[t3] ^ array[(array[t] + array[t2]) % 256] ^ 100);		//多异或了一个100
+					num = (num2 * 1446099815U ^ 1371508486U);
+					continue;
+				}
+				case 6U:
+				{
+					T1 t3;
+					t3++;
+					num = (num2 * 1047750269U ^ 2517980139U);
+					continue;
+				}
+				case 7U:
+					array2 = new T0[gparam_1.Length];
+					num = (num2 * 835581391U ^ 1087374551U);
+					continue;
+				case 8U:
+					goto IL_132;
+				case 9U:
+				{
+					t = (t + 1) % 256;
+					t2 = (array[t] + t2) % 256;
+					T0 t4 = array[t];
+					array[t] = array[t2];     //这里交换s盒很好分辨rc4
+					num = 593623138U;
+					continue;
+				}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后就没有能看懂的有意义的了，基本上全是输入输出字符串处理；&lt;/p&gt;
+&lt;p&gt;cyberchef试着解一下，对了；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251116152559975.CY8jl3Ca_Z1spuro.webp&quot; alt=&quot;image-20251116152559975&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;flag{y0u_r34lly_kn0w_m@ny_pr0gr@mm1ng_l@ngu@g3$}&lt;/p&gt;
+&lt;h1&gt;&lt;s&gt;rust_baby&lt;/s&gt;&lt;/h1&gt;
+&lt;h3&gt;做蒙了才发现这个_baby原来不是简单一点的意思，加密也太多了，以后再来探索吧(&lt;/h3&gt;
+&lt;p&gt;ida打开，main函数看不清逻辑，字符串搜索也一无所获，尝试动调；&lt;/p&gt;
+&lt;p&gt;对每个不太能识别的函数下断点，试图定位输入函数；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112144750774.DDS7vmRM_1Y1Wnu.webp&quot; alt=&quot;image-20251112144750774&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;断点命中172行，疑似是主逻辑，sub_298a中东西很多；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112145624829.7P7zgzx2_Z14Nj2x.webp&quot; alt=&quot;image-20251112145624829&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;定位到函数中318行为print，319行为输入，351行为处理输入&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112150603489.BqYxt-4t_1Uea6G.webp&quot; alt=&quot;image-20251112150603489&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;栈空间和hexview中抓到了输入；8位一处理，不全补e，现在要看它转到了哪；&lt;/p&gt;
+&lt;p&gt;感觉是处理了之后存到v195_4里面了给这个打个硬件断点，断到了v185&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112155735873.Cwwy7-VC_BMm2i.webp&quot; alt=&quot;image-20251112155735873&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112161457906.BkbKlFzg_Z33gDJ.webp&quot; alt=&quot;image-20251112161457906&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;继续下断点，知893行即为判断逻辑，n32_5里的是密文，src是加密后的明文，逐位比较；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251112174036255.COSmKqKq_ZYYfGc.webp&quot; alt=&quot;image-20251112174036255&quot; /&gt;&lt;/p&gt;
+</content:encoded></item><item><title>qctf-hachimi</title><link>https://www.wes1.cn/posts/qctf-hachimi/</link><guid isPermaLink="true">https://www.wes1.cn/posts/qctf-hachimi/</guid><description>浅看trycatch混淆</description><pubDate>Sun, 09 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;hachimi&lt;/h1&gt;
+&lt;h2&gt;0x01 去trycatch反调试&lt;/h2&gt;
+&lt;p&gt;ida打开发现很明显代码不完整，看到trylevel这个函数，搜索知是用于修改trycatch异常处理等级的函数，程序很可能是通过trycatch进行混淆；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109155425794.DqFCt-7r_Z1TOHdm.webp&quot; alt=&quot;image-20251109155425794&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;看汇编，真正程序应该在except块里，&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109161232841.DwLINL83_ZtWHhI.webp&quot; alt=&quot;image-20251109161232841&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;正常逻辑如下进入4e1357&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109161610905.BpVS3_tO_Z19ceXs.webp&quot; alt=&quot;image-20251109161610905&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;其中注意到dir ecx，ecx是0，这里抛出除零异常进入expect块；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109161640762.TSjR7zA6_Z1FicE0.webp&quot; alt=&quot;image-20251109161640762&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;流程如下：ida默认了jmp从而忽略了expect的反编译；&lt;/p&gt;
+&lt;p&gt;// ida不能识别异常，函数只有通过jge再到jmp一条路可走，认为上面_except这一块永远不会执行；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109171126516.BNJO3bVT_1mrv1s.webp&quot; alt=&quot;image-20251109171126516&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;既然jmp_145e不会执行，那就把jmp_145e nop掉,后面还有个except过滤器也nop了；&lt;/p&gt;
+&lt;p&gt;代码就正常了；&lt;/p&gt;
+&lt;p&gt;// 这样让expect一定会顺序执行，因为他本来就一定会执行，所以正好是对的&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109173030682.BNxdLv7o_MKboT.webp&quot; alt=&quot;image-20251109173030682&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;0x02 去花&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109173144206.DSueWVyh_1UOPV8.webp&quot; alt=&quot;image-20251109173144206&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;加密代码不完整，继续看汇编；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109173230475.DlWQzuqM_Z1lTASA.webp&quot; alt=&quot;image-20251109173230475&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;下面的call_+5和jz很明显是花，直接force jump,得到完整加密；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251109182400912.aR3fb9qg_1BSXOR.webp&quot; alt=&quot;image-20251109182400912&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;先tea后异或，解密如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+#include&amp;lt;string&amp;gt;
+#include&amp;lt;algorithm&amp;gt;
+#include&amp;lt;vector&amp;gt;
+#include&amp;lt;stdint.h&amp;gt;
+using namespace std;
+
+uint32_t v8[4]={};
+uint8_t v9[32]={0x4D,0x7A,0x3E,0x7A,0x84,0xFF,0x51,0xB1,0x31,0x97,0xFB,0xDC,0x2B,0xA4,0xCD,0xFB,0x85,0xCD,0xA,0x2B,0xBD,0x91,0xCF,0x69,0xBA,0x2B,0x70,0xD5,0x43,0xB8,0x3E,0x1f};
+
+ unsigned long byteswap_manual(unsigned long value)  //转大小端的函数
+ {
+ return ((value&amp;gt;&amp;gt;24) &amp;amp; 0xFF) |
+((value &amp;gt;&amp;gt; 8) &amp;amp; 0xFF00) | 
+((value &amp;lt;&amp;lt; 8) &amp;amp; 0xFF0000) |
+((value &amp;lt;&amp;lt; 24) &amp;amp; 0xff0000);
+ }
+
+
+void tea_dec(uint32_t* a1, uint32_t* a2) {
+  unsigned __int32 result; // eax
+  unsigned int i; // [esp+8h] [ebp-14h]
+  int j; // [esp+Ch] [ebp-10h]
+  unsigned int v5 = 0; // [esp+10h] [ebp-Ch]
+  unsigned int v6 = 0; // [esp+14h] [ebp-8h]
+    for ( j = 0; j &amp;lt; 8; ++j )
+  {
+    *((uint8_t *)a1 + j) ^= *(uint8_t *)(a2 + 15 - j);
+  }
+  *a1 = byteswap_manual(*a1);
+  *(a1+1) = byteswap_manual(*(a1+1));
+    uint32_t v0 = a1[0], v1 = a2[1];  // v0、v1分别是密文的左、右半部分
+    uint32_t delta = 1640531527;     //作为sum每次累加的变化值，题目中往往会修改此值
+    uint32_t v7 = 32 * (-delta);      //此处需要分析32轮加密结束后sum的值与delta的变化, 以此处加密为例子，32轮每次sum+=delta，因此最后sum=32*delta
+    for (int i = 0; i &amp;lt; 32; i++) {  // tea加密进行32轮
+        //根据加密时的顺序颠倒下面3行的顺序，将加法改为减法（异或部分都是整体，不用管），就是逆向解密过程
+    v5 -= (*(uint32_t *)(a2 + 4 * ((v7 &amp;gt;&amp;gt; 11) &amp;amp; 3)) + v7) ^ (v6 + ((v6 &amp;gt;&amp;gt; 5) ^ (16 * v6)));
+    v7 += 1640531527;
+    v6 -= (*(uint32_t *)(a2 + 4 * (v7 &amp;amp; 3)) + v7) ^ (v5 + ((v5 &amp;gt;&amp;gt; 5) ^ (16 * v5)));
+    }
+    // 因此解密后的内容要还给v数组
+    *(uint32_t*)(v9+j) = v0;
+    *(uint32_t*)(v9+j) = v1;
+  return ;
+}
+
+int main()
+{
+  v8[0] = 1495531287;
+  v8[1] = -1758678609;
+  v8[2] = -880611118;
+  v8[3] = -38157364;
+  for(int j = 0;j &amp;lt; 8;j+=2)
+    tea_dec((uint32_t*)(v9+j),v8);
+  for(char a:v9)
+    cout&amp;lt;&amp;lt;a;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;flag{ha_ha_hachimi_na_bei_lu_do};&lt;/p&gt;
+</content:encoded></item><item><title>qctf-fisher</title><link>https://www.wes1.cn/posts/qctf-fisher/</link><guid isPermaLink="true">https://www.wes1.cn/posts/qctf-fisher/</guid><description>inline hook分析</description><pubDate>Thu, 06 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;fisher&lt;/h1&gt;
+&lt;h2&gt;0x01 解密&lt;/h2&gt;
+&lt;p&gt;ida打开文件，main函数：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251108183320408.DZpU6XJc_Z1plkQ9.webp&quot; alt=&quot;image-20251108183320408&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;将输入加密为str1与密文比较，加密逻辑为换表base64；&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251108183552278.ChqiElF1_Z1k4WRf.webp&quot; alt=&quot;image-20251108183552278&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;fake flag;&lt;/p&gt;
+&lt;p&gt;尝试动调也错，感觉strcmp不能正常执行；&lt;/p&gt;
+&lt;p&gt;动调进入strcmp，发现系统指令被修改为一个jmp，进入后出现真正的加密函数&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251108195116827.Db0yA-1x_1LrtGJ.webp&quot; alt=&quot;image-20251108195116827&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;输入每八位执行一个tea加密（sub_7ff)，v5是密文，v9是key（后八位是0）；&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+#include&amp;lt;string&amp;gt;
+#include&amp;lt;algorithm&amp;gt;
+#include&amp;lt;vector&amp;gt;
+#include&amp;lt;print&amp;gt;
+#include&amp;lt;stdint.h&amp;gt;
+using namespace std;
+
+unsigned char v5[64]={};
+unsigned char v9[16]={};
+
+void tea_dec(uint32_t* v, uint32_t* k) {
+    uint32_t v0 = v[0], v1 = v[1];  // v0、v1分别是密文的左、右半部分
+    uint32_t delta = -1835914967;     //作为sum每次累加的变化值，题目中往往会修改此值
+    uint32_t sum = 32 * delta;      //此处需要分析32轮加密结束后sum的值与delta的变化, 以此处加密为例子，32轮每次sum+=delta，因此最后sum=32*delta
+    for (int i = 0; i &amp;lt; 32; i++) {  // tea加密进行32轮
+        //根据加密时的顺序颠倒下面3行的顺序，将加法改为减法（异或部分都是整体，不用管），就是逆向解密过程
+        v1 -= ((v0 &amp;lt;&amp;lt; 4) + k[2]) ^ (v0 + sum) ^ ((v0 &amp;gt;&amp;gt; 5) + k[3]);
+        v0 -= ((v1 &amp;lt;&amp;lt; 4) + k[0]) ^ (v1 + sum) ^ ((v1 &amp;gt;&amp;gt; 5) + k[1]);
+        sum -= delta;
+    }
+    // 因此解密后的内容要还给v数组
+    v[0] = v0;
+    v[1] = v1;
+}
+ int main()
+ {
+  v5[0] = 8;
+  v5[1] = -18;
+  v5[2] = 89;
+  v5[3] = 77;
+  v5[4] = 13;
+  v5[5] = -32;
+  v5[6] = -64;
+  v5[7] = -119;
+  v5[8] = -95;
+  v5[9] = -104;
+  v5[10] = -78;
+  v5[11] = -69;
+  v5[12] = -49;
+  v5[13] = 112;
+  v5[14] = 127;
+  v5[15] = -27;
+  v5[16] = -24;
+  v5[17] = 47;
+  v5[18] = -102;
+  v5[19] = -118;
+  v5[20] = 32;
+  v5[21] = -53;
+  v5[22] = 116;
+  v5[23] = 18;
+  v5[24] = -14;
+  v5[25] = 48;
+  v5[26] = 120;
+  v5[27] = 31;
+  v5[28] = 14;
+  v5[29] = -21;
+  v5[30] = 31;
+  v5[31] = -120;
+  v5[32] = -56;
+  v5[33] = -68;
+  v5[34] = 78;
+  v5[35] = -8;
+  v5[36] = 82;
+  v5[37] = 19;
+  v5[38] = 83;
+  v5[39] = -117;
+  v5[40] = -99;
+  v5[41] = -65;
+  v5[42] = 102;
+  v5[43] = 11;
+  v5[44] = 106;
+  v5[45] = -84;
+  v5[46] = 33;
+  v5[47] = 79;
+  v5[48] = -23;
+  v5[49] = 31;
+  v5[50] = 70;
+  v5[51] = 70;
+  v5[52] = -98;
+  v5[53] = -53;
+  v5[54] = -6;
+  v5[55] = 99;
+  v5[56] = -93;
+  v5[57] = -123;
+  v5[58] = 20;
+  v5[59] = -55;
+  v5[60] = 46;
+  v5[61] = -9;
+  v5[62] = 16;
+  v5[63] = -59;
+  v9[0] = 17;
+  v9[1] = 34;
+  v9[2] = 51;
+  v9[3] = 68;
+  v9[4] = 85;
+  v9[5] = 102;
+  v9[6] = 119;
+  v9[7] = -120;
+  for (int i = 0;i &amp;lt;= 7;i++)
+  {
+    tea_dec((uint32_t*)(v5+8*i), (uint32_t*)v9);
+  }
+  for (char a : v5)
+  cout&amp;lt;&amp;lt;a;
+ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;输出：zCN7zTJg0xnEzxjJywV50xn53CvO4vZPyxrF2SzFzwr53SBQ0fZV1TvOxSj70xrZ；&lt;/p&gt;
+&lt;p&gt;因为调用的是str1，所以还要base64回去，&lt;/p&gt;
+&lt;p&gt;flag{Fisherman_is_very_satisfied_with_your_bait}&lt;/p&gt;
+&lt;h2&gt;0x02 hook原理分析&lt;/h2&gt;
+&lt;p&gt;查看真实加密函数调用，找到这样的函数&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251108204603109.BTKuS6TD_1Fve08.webp&quot; alt=&quot;image-20251108204603109&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;查询后是一个inline_hook&lt;/p&gt;
+&lt;p&gt;将strcmp的函数地址存到strcmp_0中，然后执行下面函数（sub_1150或a2即为加密函数）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251108205129255.BXtI86aW_ZPPEeB.webp&quot; alt=&quot;image-20251108205129255&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;9727转hex为0x25ff，转小端ff 25为jmp的字节码，小端存进qword src[0]的低四位，&lt;/p&gt;
+&lt;p&gt;两行结束src[0]为00 00 00 00 ff 25 00 00 ，&lt;/p&gt;
+&lt;p&gt;&amp;lt;!--         highword|lowword(小端序)      --&amp;gt;&lt;/p&gt;
+&lt;p&gt;第三行从第七位00开始换为a2的地址，构建出src为jmp a2的指令，&lt;/p&gt;
+&lt;p&gt;再将新的src地址赋给*lpadress,即strcmp_0的地址,即原来库函数strcmp的地址，&lt;/p&gt;
+&lt;p&gt;&amp;lt;!--改指针不用管执行顺序，直接相当与将指向库函数strcmp的指针strcmp_0指向了jmp a2；--&amp;gt;&lt;/p&gt;
+&lt;p&gt;这样就完成了对strcmp的hook动态替换。&lt;/p&gt;
+</content:encoded></item><item><title>逆向作业#2</title><link>https://www.wes1.cn/posts/moectf_flower/</link><guid isPermaLink="true">https://www.wes1.cn/posts/moectf_flower/</guid><description>校队逆向作业#2：反调试</description><pubDate>Thu, 06 Nov 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;&lt;strong&gt;flower&lt;/strong&gt;&lt;/h1&gt;
+&lt;h2&gt;0x00   动调&lt;/h2&gt;
+&lt;p&gt;elf文件,idawsl动调无法正常运行,提示Don&apos;t trace me:(,猜测有反调试.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105151711679.CkOj-k2U_1Soq47.webp&quot; alt=&quot;image-20251105151711679&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;0x01   去花&lt;/h2&gt;
+&lt;p&gt;ida发现标红，无法f5,track到有很明显的花,4048e5处jz和jnz必有一个执行,所以call永不执行&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105150024312.vKO0Eqy8_Z1KGf6X.webp&quot; alt=&quot;image-20251105150024312&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;直接nop掉call,然后选中标红段按c强转为code,找到函数头按u再按p重定义,即可正常f5&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105152045437.i2mYFawr_T7oFp.webp&quot; alt=&quot;image-20251105152045437&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;0x02  去反调试&lt;/h2&gt;
+&lt;p&gt;对主函数按x向上追溯,发现这里第24行的cin没有执行,下第10行的断点后调试,发现在check中会跳出&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105153916779.DDp-69eU_Xlwoe.webp&quot; alt=&quot;image-20251105153916779&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;进入发现ptrace反调试函数,if(调试)就进入下面的块&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105154220679.CoXArOKP_vetFy.webp&quot; alt=&quot;image-20251105154220679&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;直接让他不进入即可,将jz改为jmp&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105173120318.DYPYhdRU_ZfX3Vn.webp&quot; alt=&quot;image-20251105173120318&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;然后就可以正常调试了,solve加密函数也能正常显示&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105173318497.2cYpZxX9_1Q1WM6.webp&quot; alt=&quot;image-20251105173318497&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;0x03 解密&lt;/h2&gt;
+&lt;p&gt;encode函数就是将输入自增,异或和与enc中比较&lt;/p&gt;
+&lt;p&gt;解密代码:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+#include&amp;lt;string&amp;gt;
+#include&amp;lt;algorithm&amp;gt;
+#include&amp;lt;vector&amp;gt;
+using namespace std;
+
+unsigned int encflag[] = {0x4F,0x1A,0x59,0x1F,0x5B,0x1D,0x5D,0x6F,0x7B,0x47,0x7E,0x44,0x6A,0x7,0x59,0x67,0xE,0x52,0x8,0x63,0x5C,0x1A,0x52,0x1F,0x20,0x7B,0x21,0x77,0x70,0x25,0x74,0x2B,0x44};
+
+int main()
+{
+    unsigned int key = 0x23;
+    
+
+​    for(int i = 0; i &amp;lt; 32; i++)
+​    {
+​        encflag[i] ^= key;
+​        key++;
+​        cout&amp;lt;&amp;lt;char((encflag[i]&amp;lt;&amp;lt;24)&amp;amp;0xFF);
+​    }
+​    return 0;
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解完发现不对:111l&amp;gt;|9|5tEPkSjE7hU=f=Uk&quot;k%&lt;/p&gt;
+&lt;p&gt;构造跳过验证moectf{}和内部32位长度,动调过去发现key最后被修改为0x29(函数内自增了一次)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251106145307003.D-yomDIe_ZNm4PA.webp&quot; alt=&quot;image-20251106145307003&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+
+#include&amp;lt;string&amp;gt;
+
+#include&amp;lt;algorithm&amp;gt;
+
+#include&amp;lt;vector&amp;gt;
+
+using namespace std;
+
+unsigned int encflag[] = {0x4F,0x1A,0x59,0x1F,0x5B,0x1D,0x5D,0x6F,0x7B,0x47,0x7E,0x44,0x6A,0x7,0x59,0x67,0xE,0x52,0x8,0x63,0x5C,0x1A,0x52,0x1F,0x20,0x7B,0x21,0x77,0x70,0x25,0x74,0x2B};
+
+int main()
+
+{
+
+  unsigned int key = 0x29;
+
+
+  for(int i = 0; i &amp;lt; 32; i++)
+
+  {
+
+​    encflag[i] ^= key;
+
+​    key++;
+
+​    printf(&quot;%c&quot;,char((encflag[i])&amp;amp;0xFF));
+
+  }
+
+  return 0;
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解得f0r3v3r_JuMp_1n_7h3_a$m_a9b35c3c,套上验证moectf{}即可;&lt;/p&gt;
+&lt;h1&gt;&lt;strong&gt;test&lt;/strong&gt;&lt;/h1&gt;
+&lt;h2&gt;0x00 调试&lt;/h2&gt;
+&lt;p&gt;发现flag似乎一闪而过&lt;/p&gt;
+&lt;h2&gt;0x01 下断点&lt;/h2&gt;
+&lt;p&gt;主函数中什么也没有,尝试下断点动态调试,最终找到进入了这样的函数&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105171058080.Dfo2iEdw_1ywDqe.webp&quot; alt=&quot;image-20251105171058080&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;再断在clear之前,显示出flag&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.wes1.cn/_astro/image-20251105171232060.C6yC0L1v_Z15GotX.webp&quot; alt=&quot;image-20251105171232060&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;flag{Wow_Y0u_f1nd_me_in_init_array!}&lt;/p&gt;
+</content:encoded></item></channel></rss>

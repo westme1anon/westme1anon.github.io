@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+Allow: /$
+Allow: /posts/
+
+Sitemap: https://www.wes1.cn/sitemap-index.xml
