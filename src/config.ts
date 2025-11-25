@@ -38,7 +38,7 @@ export const siteConfig: SiteConfig = {
 	featurePages: {
 		anime: false, // 番剧页面开关
 		diary: false, // 日记页面开关
-		friends: false, // 友链页面开关
+		friends: true, // 友链页面开关
 		projects: true, // 项目页面开关
 		skills: false, // 技能页面开关
 		timeline: true, // 时间线页面开关
@@ -131,22 +131,19 @@ export const siteConfig: SiteConfig = {
 		// 请自行搭建API
 
 		homeText: {
-			enable: false, // 在主页显示自定义文本
-			title: "美しいミズキ", // 主页横幅主标题
+			enable: true, // 在主页显示自定义文本
+			title: "", // 主页横幅主标题
 
 			subtitle: [
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"你想要成为什么颜色？",
+				"点击右上角的调色盘，盛满你喜欢的颜色>_<"
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
 
 				speed: 100, // 打字速度（毫秒）
-				deleteSpeed: 50, // 删除速度（毫秒）
-				pauseTime: 2000, // 完全显示后的暂停时间（毫秒）
+				deleteSpeed: 30, // 删除速度（毫秒）
+				pauseTime: 1500, // 完全显示后的暂停时间（毫秒）
 			},
 		},
 
@@ -260,11 +257,11 @@ export const navBarConfig: NavBarConfig = {
 					url: "/about/",
 					icon: "material-symbols:person",
 				},
-				// {
-				// 	name: "Friends",
-				// 	url: "/friends/",
-				// 	icon: "material-symbols:group",
-				// },
+				{
+					name: "Friends",
+					url: "/friends/",
+					icon: "material-symbols:group",
+				},
 				{
 			name: "Links",
 			url: "/links/",
