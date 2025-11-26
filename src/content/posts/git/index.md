@@ -1,5 +1,5 @@
 ---
-git push origin branch-nametitle: git
+title: git
 date: 2025-11-06
 tags: [git]
 category: WIKI OTHERS
