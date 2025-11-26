@@ -1,9 +1,9 @@
 ---
 title: git
-date: 2025-11-06
+date: 2025-11-26
 tags: [git]
 category: WIKI OTHERS
-published: 2025-11-06
+published: 2025-11-26
 description: git用法学习，用多少学多少~
 ---
 
