@@ -39,6 +39,8 @@ STRU~MHCS@SX~BNSD~@RRDSU
 
 再用uncompyle6将.pyc转成.py;
 
+`uncompyle6 -o C:\Users\sjx\Desktop\ctf\moectf2025 "C:\Users\sjx\Desktop\ctf\moectf2025\ezpy (1).pyc"`
+
 ![image-20251113224322153](./image-20251113224322153.png)
 
 修复一下.py,很明显的z3
