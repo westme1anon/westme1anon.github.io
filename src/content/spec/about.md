@@ -18,3 +18,11 @@
 
 - 2025-12-23
 - 博客由`Githubpages`源换为`Vercel`源，并由`cloudfare`辅助重定向构建；
+
+- 2025-12-24
+
+- 博客配置了`Twikoo`评论系统，评论挂载`MongoDB Atlas`服务器，并用`Netlify`部署；
+
+- ## 欢迎评论desuwa
+
+- ![image-20251224223848497](./image-20251224223848497.png)
