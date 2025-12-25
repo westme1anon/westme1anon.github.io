@@ -4,7 +4,7 @@ date: 2025-11-14
 tags: [CTF, flower]
 category: WIKI
 published: 2025-11-14
-description: 花指令总结，长期更新。
+description: 花指令个人总结。
 ---
 
 # 花指令总结
