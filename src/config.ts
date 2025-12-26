@@ -20,8 +20,8 @@ import { LinkPreset } from "./types/config";
 const SITE_LANG = "en"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
 const SITE_TIMEZONE = 8; //设置你的网站时区 from -12 to 12 default in UTC+8
 export const siteConfig: SiteConfig = {
-	title: "wes1",
-	subtitle: "ctfer",
+	title: "wes1's blog",
+	subtitle: "溯时溯光溯我心",
 	siteURL: "https://www.wes1.cn/", // 请替换为你的站点URL，以斜杠结尾
 	siteStartDate: "2025-11-07", // 站点开始运行日期，用于站点统计组件计算运行天数
 
@@ -80,7 +80,7 @@ export const siteConfig: SiteConfig = {
 	// 壁纸模式配置
 	wallpaperMode: {
 		// 默认壁纸模式：banner=顶部横幅，fullscreen=全屏壁纸，none=无壁纸
-		defaultMode: "none",
+		defaultMode: "banner",
 		// 整体布局方案切换按钮显示设置（默认："desktop"）
 		// "off" = 不显示
 		// "mobile" = 仅在移动端显示
