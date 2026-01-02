@@ -3,7 +3,7 @@
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue) 
 ![Astro](https://img.shields.io/badge/Astro-5.12.8-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ![Mizuki Preview](../README.webp)
 
@@ -32,38 +32,6 @@
 [**中文繁体**](./README.tw.md) /
 
 
-## 🆕 v6.5 アップデート
-- **コードブロック折りたたみ機能**: コードブロックの折りたたみをサポートし、コードの読書体験を改善しました。
-- **リポジトリ分離**: コードリポジトリとコンテンツリポジトリの分離モードをサポートし、コンテンツの更新をより便利にしました。
-- **新しいフロントエンドレイアウト管理**: 全く新しいフロントエンドレイアウト管理システムを実装し、より良いコントロールを提供します。
-- **ウェブサイトURL設定**: config.tsにウェブサイトURL設定を追加し、管理を容易にしました。
-- **レイアウト切り替え機能**: フロントエンドレイアウト切り替え機能を追加し、より柔軟な表示オプションを提供します。
-- **パフォーマンスとバグ修正**: ウェブサイトのパフォーマンスを最適化し、様々なバグを修正し、ユーザーエクスペリエンスを向上させました。
-
-## 🆕 v6.0 アップデート
-- **ページリファクタリング**: アニメ、タイムライン、プロジェクト、スキル、アルバム、フレンドリンク、日記、アバウトページを完全にリファクタリングし、パフォーマンスとユーザーエクスペリエンスを向上させました。
-- **ページ切り替え機能**: ページ切り替え機能とSEO最適化モジュールを追加し、機能ページの表示/非表示を制御できるようになりました。
-- **新しいグリッドレイアウト**: 新しいグリッド記事リストレイアウトを導入し、コンテンツ表示効果を改善しました。
-- **リップル管理**: リップル効果管理モジュールを追加し、視覚的なインタラクション効果を強化しました。
-
-## 🆕 v5.0 アップデート
-- **Pio Live2D統合**: Pio Live2Dキャラクターを統合し、可愛らしいインタラクティブな仲間を提供してユーザーエンゲージメントを向上させます。
-- **高度な設定**: モデルパス、位置、サイズ、会話内容など、`src/config.ts`で詳細な設定をサポートし、パーソナライズされたニーズに対応します。
-- **シームレスなナビゲーション**: 「ホームに戻る」機能は、テーマに組み込まれたSwupを使用して、スムーズでリフレッシュなしのページ遷移を提供します。
-
-## 🆕 v4.3 アップデート
-- **アニメページ：** より可愛くて魅力的なアニメページにリデザインし、アニメリスト、詳細、タイムラインを含みます。
-- **アルバムページ：** ページネーション+フォルダデータインデックス方式を使用してアルバムページを再構築しました。
-
-## 🆕 v3.4 アップデート
-- **新しいページ：** プロジェクト紹介、スキル紹介、タイムラインページを追加し、あなたの作品、専門スキル、成長の旅を表示できるようになりました。
-- **ドロップダウンメニュー修正：** ドロップダウンメニューをクリックした際に表示される境界線の問題を解決し、インターフェースの一貫性を向上させました。
-- **検索機能の最適化：** 検索機能のパフォーマンスと精度を向上させました。
-- **フッターHTMLインジェクション：** ページの下部にカスタムHTMLコンテンツを挿入できる新機能を導入し、より大きな柔軟性を提供します。
-
-## 🆕 v3.3 アップデート
-- **Mermaid構文サポート：** Mermaidチャート構文のサポートを追加し、フローチャート、シーケンス図、ガントチャートなどをMarkdown内に直接埋め込むことができるようになりました。
-- **Umamiアナリティクス：** Umamiアナリティクスのサポートを追加し、ウェブサイトの訪問データ分析を簡単に統合できるようになりました。
 
 ![設定](../configuration.svg)
 
@@ -243,7 +211,7 @@ Mizukiは標準のGitHub Flavored Markdownを超える拡張機能をサポー�
 | `pnpm build`               | 本番サイトを`./dist/`にビルド              |
 | `pnpm preview`             | デプロイ前にビルドをローカルでプレビュー     |
 | `pnpm check`               | Astroエラーチェックを実行                  |
-| `pnpm format`              | Biomeでコードをフォーマット                |
+| `pnpm format`              | Prettierでコードをフォーマット                |
 | `pnpm lint`                | コードの問題をチェックして修正              |
 | `pnpm new-post <ファイル名>` | 新しいブログ投稿を作成                     |
 | `pnpm astro ...`           | Astro CLIコマンドを実行                   |
@@ -293,19 +261,38 @@ export const siteConfig: SiteConfig = {
 
 ## 📄 ライセンス
 
-このプロジェクトはMITライセンスの下でライセンスされています - 詳細は[LICENSE](../LICENSE)ファイルをご覧ください。
+このプロジェクトはApacheライセンス2.0の下でライセンスされています - 詳細は[LICENSE](../LICENSE)ファイルをご覧ください。
+
+### 元のプロジェクトライセンス
+
+このプロジェクトは[Fuwari](https://github.com/saicaca/fuwari)に基づいて開発され、元のプロジェクトはMITライセンスを使用しています。MITライセンスの要件に従い、元の著作権表示と許可通知はLICENSE.MITファイルに含まれています。
 
 ## 🙏 謝辞
 
 - オリジナルの[Fuwari](https://github.com/saicaca/fuwari)テンプレートをベースにしています
-- [Astro](https://astro.build)と[Tailwind CSS](https://tailwindcss.com)で構築
 - [Yukina](https://github.com/WhitePaper233/yukina) - 美しくエレガントなブログテンプレートにインスパイアされました
+- 一部のデザインは[Firefly](https://github.com/CuteLeaf/Firefly)テンプレートからインスピレーションを得ています
+- [Pio](https://github.com/Dreamer-Paul/Pio)を使用してかわいいLive2D看板娘プラグインを実装
+- [Astro](https://astro.build)と[Tailwind CSS](https://tailwindcss.com)で構築
 - アイコンは[Iconify](https://iconify.design/)から
 
-### 特別な感謝
+### 🌸 特別な感謝
 
+- **[Fuwari](https://github.com/saicaca/fuwari)** by saicaca - このプロジェクトのベースとなるオリジナルテンプレート。このような美しく機能的なテンプレートを作成していただきありがとうございます。
 - **[Yukina](https://github.com/WhitePaper233/yukina)** - このプロジェクトの形成に役立ったデザインのインスピレーションと創造性を提供してくれたことに感謝します。Yukinaは優れたデザイン原則とユーザーエクスペリエンスを示す、エレガントなブログテンプレートです。
+- **[Firefly](https://github.com/CuteLeaf/Firefly)** - 優れたレイアウトデザインのアイデアを提供していただきありがとうございます。デュアルサイドバーレイアウト、記事の2カラムグリッドレイアウト、およびいくつかのウィジェットのデザインと実装により、Mizukiのインターフェースがより豊かになりました。
 
+## 🍀 コントリビューター
+
+このプロジェクトに貢献してくださったすべてのコントリビューターに感謝します。質問や提案がある場合は、[Issue](https://github.com/matsuzaka-yuki/Mizuki/issues)または[Pull Request](https://github.com/matsuzaka-yuki/Mizuki/pulls)を提出してください。
+
+<a href="https://github.com/matsuzaka-yuki/Mizuki/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=matsuzaka-yuki/Mizuki" />
+</a>
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=matsuzaka-yuki/Mizuki&type=Date)](https://star-history.com/#matsuzaka-yuki/Mizuki&Date)
 ---
 
 ⭐ このプロジェクトが役立つと思ったら、スターを付けることを検討してください！

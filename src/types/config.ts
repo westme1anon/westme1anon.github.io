@@ -1,4 +1,10 @@
-import type { DARK_MODE, LIGHT_MODE, WALLPAPER_BANNER, WALLPAPER_FULLSCREEN, WALLPAPER_NONE } from "../constants/constants";
+import type {
+	DARK_MODE,
+	LIGHT_MODE,
+	WALLPAPER_BANNER,
+	WALLPAPER_FULLSCREEN,
+	WALLPAPER_NONE,
+} from "../constants/constants";
 
 export type SiteConfig = {
 	title: string;
@@ -7,8 +13,33 @@ export type SiteConfig = {
 	keywords?: string[]; // 站点关键词，用于生成 <meta name="keywords">
 	siteStartDate?: string; // 站点开始日期，格式：YYYY-MM-DD，用于计算运行天数
 
-	timeZone:|-12|-11|-10|-9|-8|-7|-6|-5|-4|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12;
-	
+	timeZone:
+		| -12
+		| -11
+		| -10
+		| -9
+		| -8
+		| -7
+		| -6
+		| -5
+		| -4
+		| -3
+		| -2
+		| -1
+		| 0
+		| 1
+		| 2
+		| 3
+		| 4
+		| 5
+		| 6
+		| 7
+		| 8
+		| 9
+		| 10
+		| 11
+		| 12;
+
 	lang:
 		| "en"
 		| "zh_CN"
@@ -69,6 +100,7 @@ export type SiteConfig = {
 	// 添加bangumi配置
 	bangumi?: {
 		userId?: string; // Bangumi用户ID
+		fetchOnDev?: boolean;
 	};
 
 	// 添加番剧页面配置
@@ -131,9 +163,11 @@ export type SiteConfig = {
 	};
 	toc: {
 		enable: boolean;
+		mode: "float" | "sidebar"; // 目录显示模式："float" 悬浮按钮模式，"sidebar" 侧边栏模式
 		depth: 1 | 2 | 3;
 		useJapaneseBadge?: boolean; // 使用日语假名标记（あいうえお...）代替数字
 	};
+	showCoverInContent: boolean; // 控制文章封面在文章内容页显示的开关
 	generateOgImages: boolean;
 	favicon: Favicon[];
 	showLastModified: boolean; // 控制“上次编辑”卡片显示的开关
@@ -190,6 +224,33 @@ export type LicenseConfig = {
 	name: string;
 	url: string;
 };
+
+// Permalink 配置
+export type PermalinkConfig = {
+	enable: boolean; // 是否启用全局 permalink 功能
+	/**
+	 * permalink 格式模板
+	 * 支持的占位符：
+	 * - %year% : 4位年份 (2024)
+	 * - %monthnum% : 2位月份 (01-12)
+	 * - %day% : 2位日期 (01-31)
+	 * - %hour% : 2位小时 (00-23)
+	 * - %minute% : 2位分钟 (00-59)
+	 * - %second% : 2位秒数 (00-59)
+	 * - %post_id% : 文章序号（按发布时间升序排列）
+	 * - %postname% : 文章文件名（slug）
+	 * - %category% : 分类名（无分类时为 "uncategorized"）
+	 *
+	 * 示例：
+	 * - "%year%-%monthnum%-%postname%" => "2024-12-my-post"
+	 * - "%post_id%-%postname%" => "42-my-post"
+	 * - "%category%-%postname%" => "tech-my-post"
+	 *
+	 * 注意：不支持斜杠 "/"，所有生成的链接都在根目录下
+	 */
+	format: string;
+};
+
 // 评论配置
 
 export type CommentConfig = {
@@ -205,7 +266,10 @@ type TwikooConfig = {
 
 export type LIGHT_DARK_MODE = typeof LIGHT_MODE | typeof DARK_MODE;
 
-export type WALLPAPER_MODE = typeof WALLPAPER_BANNER | typeof WALLPAPER_FULLSCREEN | typeof WALLPAPER_NONE;
+export type WALLPAPER_MODE =
+	| typeof WALLPAPER_BANNER
+	| typeof WALLPAPER_FULLSCREEN
+	| typeof WALLPAPER_NONE;
 
 export type BlogPostData = {
 	body: string;
@@ -377,4 +441,11 @@ export type PioConfig = {
 			text?: string; // 自定义文本
 		}>;
 	};
+};
+
+/**
+ * 分享组件配置
+ */
+export type ShareConfig = {
+	enable: boolean; // 是否启用分享功能
 };
