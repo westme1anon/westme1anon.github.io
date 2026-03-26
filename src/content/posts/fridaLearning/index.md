@@ -1,9 +1,9 @@
 ---
 title: Re；从零开始的frida学习与fridalab
-date: 2026-3-26
+date: 2026-03-26
 tags: [re, wiki]
 category: WIKI
-published: 2026-3-26
+published: 2026-03-26
 description: 很好写与用的安卓逆向工具
 ---
 
