@@ -23,6 +23,6 @@
 
 - 博客配置了`Twikoo`评论系统，评论挂载`MongoDB Atlas`服务器，并用`Netlify`部署；
 
-- ## 欢迎评论desuwa
+- ## 欢迎评论desuwa~
 
 - ![image-20251224223848497](./image-20251224223848497.png)
