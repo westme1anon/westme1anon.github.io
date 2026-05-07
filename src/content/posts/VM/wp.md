@@ -1,3 +1,14 @@
+---
+title: "CTF 逆向 VM 题型：从零到一认识与逆向虚拟机"
+date: 2026-05-07
+tags: [WIKI]
+category: CTF
+published: 2026-05-07
+description: "至少要看懂AI在是怎么做出来的"
+---
+
+
+
 # CTF 逆向 VM 题型：从零到一认识与逆向虚拟机
 
 ---
