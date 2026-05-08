@@ -1,8 +1,8 @@
 ---
-title: qctf三道很有意思的题目汇总
+title: qctf
 tags: [wp, re, flower, hook, try catch]
 category: CTF
-description: inline hook分析
+description: qctf三道很有意思的题目汇总
 published: 2025-11-06
 ---
 
