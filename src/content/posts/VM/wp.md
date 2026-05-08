@@ -4,14 +4,11 @@ date: 2026-05-07
 tags: [WIKI]
 category: CTF
 published: 2026-05-07
-description: "至少要看懂AI在是怎么做出来的"
+description: "至少要看懂AI是怎么做出来的"
 ---
 
 
 
-# CTF 逆向 VM 题型：从零到一认识与逆向虚拟机
-
----
 
 VM（虚拟机）本质是**题目作者自己实现了一套指令集**，就如x86,arm64按规则让机器码对应不同的汇编。
 
