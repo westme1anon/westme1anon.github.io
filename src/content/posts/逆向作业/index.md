@@ -1,9 +1,9 @@
 ---
-title: "逆向作业#3"
+title: "校队逆向作业"
 date: 2025-11-11
 tags: ["wp", "re"]
 category: "CTF"
-description: "校队逆向作业#3：多语言逆向"
+description: "多语言逆向，花指令与壳，安卓逆向入门"
 published: 2025-11-11
 ---
 

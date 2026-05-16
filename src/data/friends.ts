@@ -15,9 +15,9 @@ export const friendsData: FriendItem[] = [
 	{
 		id: 1,
 		title: "Artino1's Blog",
-		imgurl: "https://atrino1.github.io/img/avater.jpg",
+		imgurl: "https://www.yuoooka.cn/api/picture?id=avater0.jpg",
 		desc: "Re fresher",
-		siteurl: "https://atrino1.github.io",
+		siteurl: "https://www.yuoooka.cn",
 		tags: ["ctfer"],
 	},
 	{
